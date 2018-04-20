@@ -1,0 +1,960 @@
+{% extends 'index.html' %}
+{% load static %}
+{% load staticfiles %}
+{% block page-content %}
+
+    <div id="page-wrapper">
+
+        <!-- 弹出层 start -->
+        <style>
+            legend{
+                border-color:#8dacc4;
+                margin-bottom:0;
+            }
+            pre{
+                border:0;
+            }
+            .upload-span {
+                display: inline-block;
+                width: 120px;
+                height: 40px;
+                color: #FFFFFF;
+                text-align: center;
+                line-height: 40px;
+                background-color: blue;
+                border: 2px solid blue;
+                border-radius: 5px;
+                cursor: pointer;
+                letter-spacing: 2px;
+            }
+
+            .upload-mask {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 9;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(84, 84, 84, 0.3);
+                display: none;
+            }
+
+            .upload-component {
+                position: absolute;
+                z-index: 99;
+                top: 50%;
+                left: 50%;
+                margin-left: -120px;
+                margin-top: -60px;
+                width: 240px;
+                height: 120px;
+                background-color: #FFFFFF;
+                display: none;
+            }
+
+            .upload-close {
+                position: relative;
+                height: 30px;
+                background-color: rgb(234, 234, 234);
+            }
+
+            .upload-close span {
+                position: absolute;
+                right: 15px;
+                line-height: 30px;
+                cursor: pointer;
+            }
+
+            .upload-content,
+            .confirm-cancel {
+                margin-top: 15px;
+            }
+
+            .progress {
+                position: relative;
+                width: 90%;
+                height: 22px;
+                margin-left: 4.88888%;
+                text-align: center;
+                line-height: 22px;
+                border: 1px solid #ccc;
+            }
+
+            .upload-text {
+                position: absolute;
+                z-index: 99999;
+                color:#fff;
+            }
+            .traditional{
+                margin-top:10px;
+            }
+            .uploaded {
+                position: absolute;
+                left: 0;
+                z-index: 9999;
+                width: 0%;
+                height: 100%;
+               /* background-color: blue;*/
+                color: #FFFFFF;
+            }
+
+            .confirm-cancel span {
+                display: inline-block;
+                width: 60px;
+                height: 30px;
+                line-height: 30px;
+                text-align: center;
+                background-color: #ccc;
+                cursor: wait;
+            }
+
+            .confirm {
+                margin-left: 40%;
+            }
+            .uploadLable{
+                width:70%;
+                margin-left:15%;
+            }
+            .cancel {
+                margin-left: 10px;
+            }
+            .bootstrap-select.btn-group.active .dropdown-menu{
+                display:block;
+            }
+
+
+        </style>
+        <!-- 弹出层 end -->
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa fa-gears"></i>&nbsp;<span>命令执行</span> </h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-gears"></i>&nbsp;批量命令执行
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <legend><i class="fa  fa-paper-plane"></i> Ansible服务器</legend>
+                                <form role="form" id="ansibleModelRun" class="main form-horizontal">{% csrf_token %}
+                                    <fieldset>
+{#                                        <div class="form-group" >#}
+{#                                                <label class="col-sm-3 control-label">动态主机</label>#}
+{#                                                <div class="col-sm-6">#}
+{#                                                    <select class="form-control" name="server_model" id="server_model" onchange="javascript:oBtAnsibleServerl();">#}
+{#                                                        <option value="service" name="server_model">业务类型</option>#}
+{#                                                        <option value="group" name="server_model">使用分组</option>#}
+{#                                                        <option value="custom" name="server_model">自定义</option>#}
+{#                                                    </select>#}
+{#                                                </div>#}
+{#                                        </div>#}
+{##}
+{#                                        <div id="service_server" class="form-group">#}
+{#                                             <label class="col-sm-3 control-label" >业务类型</label>#}
+{#                                             <div class="col-sm-6">#}
+{#                                                <select class="form-control" name="ansible_service"  id="ansible_service" required>#}
+{#                                                    {% for ds in serviceList %}#}
+{#                                                        <option name="service" value="{{ds.id}}">{{ds.service_name}}</option>#}
+{#                                                    {% endfor %}#}
+{#                                                </select>#}
+{#                                             </div>#}
+{#                                        </div>#}
+                                        <label class="control-label">平台分组<span style="color:red;"> *</span>
+                                            <select multiple class="selectpicker auto-select select-sm" data-actions-box="true"
+                                                        data-select-all-text="全选"
+                                                        data-deselect-all-text="未选" data-none-selected-text="请选择资产平台"
+                                                        data-live-search="true"
+                                                        data-width="100%"
+                                                        data-live-search-placeholder="请输入检索内容"
+                                                        name="ansible_group" id="ansible_group" required>
+                                                <option name="group" value="0" selected>全部平台</option>
+                                                {% for ds in groupList %}
+                                                    <option name="group" value="{{ ds.id }}">{{ ds.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </label>
+                                        <label class="control-label">操作系统类型
+                                            <select class="selectpicker auto-select select-sm" data-live-search="true"
+                                                        data-live-search-placeholder="请输入检索内容"
+                                                        data-none-selected-text="请选择操作系统类型"
+                                                        data-width="100%"
+                                                        name="os_type" id="os_type">
+                                                <option name="os_type" value="" selected>全部类型</option>
+                                                <option name="os_type" value="RedHat">RedHat</option>
+                                                <option name="os_type" value="CentOS">CentOS</option>
+                                                <option name="os_type" value="Solaris">Solaris</option>
+                                                <option name="os_type" value="SLES">SLES</option>
+                                                <option name="os_type" value="AIX">AIX</option>
+                                                <option name="os_type" value="HP-UX">HP-UX</option>
+                                            </select>
+                                        </label>
+                                        <input type="hidden" class="form-control" name="model" value="model">
+                                        <input type="hidden" class="form-control" id="ans_uuid" name="ans_uuid"
+                                               value="{{ ans_uuid }}">
+                                        <label class="control-label">中间件类型
+                                            <select class="selectpicker auto-select select-sm" data-live-search="true"
+                                                    data-live-search-placeholder="请输入检索内容"
+                                                    data-none-selected-text="请选择中间件类型"
+                                                    data-width="100%"
+                                                    name="middleware_type" id="middleware_type">
+                                                <option name="middleware_type" value="" selected>全部类型</option>
+                                                <option name="middleware_type" value="tomcat">Tomcat</option>
+                                                <option name="middleware_type" value="apache">Apache</option>
+                                                <option name="middleware_type" value="nginx">nginx</option>
+                                                <option name="middleware_type" value="zabbix">Zabbix</option>
+                                                <option name="middleware_type" value="openssh">OpenSSH</option>
+                                                <option name="middleware_type" value="openssl">OpenSSL</option>
+                                                <option name="middleware_type" value="struts">Struts</option>
+                                                <option name="middleware_type" value="weblogic">weblogic</option>
+                                                <option name="middleware_type" value="jboss">JBoss</option>
+                                                <option name="middleware_type" value="websphere">WebSphere</option>
+                                                <option name="middleware_type" value="sudo">SUDO</option>
+                                                <option name="middleware_type" value="python">Python</option>
+                                                <option name="middleware_type" value="resin">Resin</option>
+                                                <option name="middleware_type" value="axis">Axis</option>
+                                                <option name="middleware_type" value="JDK">JDK</option>
+                                            </select>
+                                        </label>
+                                        <label class="control-label">数据库类型
+                                            <select class="selectpicker auto-select select-sm" data-live-search="true"
+                                                    data-live-search-placeholder="请输入检索内容"
+                                                    data-none-selected-text="请选择数据库类型"
+                                                    data-width="100%"
+                                                    name="db_type" id="db_type">
+                                                <option name="db_type" value="" selected>全部类型</option>
+                                                <option name="db_type" value="oracle">Oracle</option>
+                                                <option name="db_type" value="mysql">MySQL</option>
+                                                <option name="db_type" value="db2">DB2</option>
+                                                <option name="db_type" value="sqlserver">SqlServer</option>
+                                                <option name="db_type" value="sybase">Sybase</option>
+                                                <option name="db_type" value="postgresql">PostgreSQL</option>
+                                                <option name="db_type" value="informix">INFORMIX</option>
+                                            </select>
+                                        </label>
+                                        <label class="control-label">平台服务器
+                                            <span style="color:red;"> *</span>
+                                            <select multiple class="selectpicker auto-select select-sm" data-actions-box="true"
+                                                    data-select-all-text="全选"
+                                                    data-deselect-all-text="未选" data-none-selected-text="请选择服务器"
+                                                    data-live-search="true"
+                                                    data-width="100%"
+                                                    data-live-search-placeholder="请输入检索内容" name="ansible_server"
+                                                    id="ansible_server" required>
+                                            </select>
+                                        </label>
+                                        <label class="control-label">SUDO模式
+                                            <select class="selectpicker auto-select select-sm"
+                                                    data-width="100%"
+                                                    data-none-selected-text="请选择是否SUDO模式"
+                                                    name="sudo_type" id="sudo_type">
+                                                <option name="sudo_type" value="0" selected>否</option>
+                                                <option name="sudo_type" value="1">是</option>
+                                            </select>
+                                        </label>
+                                        <label class="control-label">Ad-Hoc类型
+                                            <span style="color:red;"> *</span>
+                                            <select class="form-control selectpicker auto-select select-sm" name="ansible_model" id="ansible_model"
+                                                    onchange="javascript:oBtAnsibleModel();">
+                                                <option value="ping" name="ansible_model">ping</option>
+                                                <option value="shell" name="ansible_model">shell</option>
+                                                <option value="yum" name="ansible_model">yum</option>
+                                                <option value="copy" name="ansible_model">copy</option>
+                                                <option value="service" name="ansible_model">service</option>
+                                                <option value="file" name="ansible_model">file</option>
+                                                <option value="user" name="ansible_model">user</option>
+                                                <option value="synchronize" name="ansible_model">sync</option>
+                                                <option value="cron" name="ansible_model">cron</option>
+                                                <option value="get_url" name="ansible_model">wget</option>
+                                                <option value="raw" name="ansible_model">raw</option>
+                                                <option value="custom" name="ansible_model">自定义</option>
+                                            </select>
+                                        </label>
+                                        <label class="control-label">Ad-Hoc参数
+                                            <input id="ansible_args" type="text" class="form-control auto-input input-sm"
+                                                       placeholder="输入模块参数" name="ansible_agrs" value="">
+                                        </label>
+                                        <label id="custom_model"  class="control-label" style="display:none;">自定义Ad-Hoc
+                                            <input id="custom_model_value" type="text" class="form-control auto-input input-sm"
+                                                       placeholder="输入模块" name="custom_model" value="">
+                                        </label>
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                onclick="runAnsibleModel(this)">执行
+                                        </button>
+
+                                    </fieldset>
+                                </form>
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <legend><i class="fa  fa-paper-plane-o"></i> 执行结果</legend>
+                                <pre id="pre" class="traditional" style="height: 400px">
+				                        <div id="result">
+				                        </div>
+				                    </pre>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+{#        <div class="row">#}
+{#            <div class="col-lg-12">#}
+{#                <div class="panel panel-default">#}
+{#                    <div class="panel-heading">#}
+{#                        <i class="fa fa-gears"></i>&nbsp;批量命令执行#}
+{#                    </div>#}
+{#                    <div class="panel-body">#}
+{#                        <div class="row">#}
+{#                            <div class="col-lg-12">#}
+{#                                <legend><i class="fa  fa-paper-plane"></i> Ansible服务器</legend>#}
+{#                                <form role="form" id="ansibleModelRun" class="main form-horizontal">{% csrf_token %}#}
+{#                                    <fieldset>#}
+{#                                        <div class="form-group" >#}
+{#                                                <label class="col-sm-3 control-label">动态主机</label>#}
+{#                                                <div class="col-sm-6">#}
+{#                                                    <select class="form-control" name="server_model" id="server_model" onchange="javascript:oBtAnsibleServerl();">#}
+{#                                                        <option value="service" name="server_model">业务类型</option>#}
+{#                                                        <option value="group" name="server_model">使用分组</option>#}
+{#                                                        <option value="custom" name="server_model">自定义</option>#}
+{#                                                    </select>#}
+{#                                                </div>#}
+{#                                        </div>#}
+{##}
+{#                                        <div id="service_server" class="form-group">#}
+{#                                             <label class="col-sm-3 control-label" >业务类型</label>#}
+{#                                             <div class="col-sm-6">#}
+{#                                                <select class="form-control" name="ansible_service"  id="ansible_service" required>#}
+{#                                                    {% for ds in serviceList %}#}
+{#                                                        <option name="service" value="{{ds.id}}">{{ds.service_name}}</option>#}
+{#                                                    {% endfor %}#}
+{#                                                </select>#}
+{#                                             </div>#}
+{#                                        </div>#}
+{##}
+{#                                        <div id="group_server" class="form-group">#}
+{#                                            <label class="col-lg-2 col-md-2 col-sm-3 control-label">平台分组<span style="color:red;"> *</span></label>#}
+{#                                            <div class="col-lg-3 col-md-3 col-sm-3">#}
+{#                                                <select multiple class="selectpicker" data-actions-box="true"#}
+{#                                                        data-select-all-text="全选"#}
+{#                                                        data-deselect-all-text="未选" data-none-selected-text="请选择资产平台"#}
+{#                                                        data-live-search="true"#}
+{#                                                        data-width="100%"#}
+{#                                                        data-live-search-placeholder="请输入检索内容"#}
+{#                                                        name="ansible_group" id="ansible_group" required>#}
+{#                                                    <option name="group" value="0" selected>全部平台</option>#}
+{#                                                    {% for ds in groupList %}#}
+{#                                                        <option name="group" value="{{ ds.id }}">{{ ds.name }}</option>#}
+{#                                                    {% endfor %}#}
+{#                                                </select>#}
+{#                                            </div>#}
+{#                                            <label class="col-lg-2 col-md-2 col-sm-3 control-label">操作系统类型</label>#}
+{#                                            <div class="col-lg-3 col-md-3 col-sm-3">#}
+{#                                                <select class="selectpicker" data-live-search="true"#}
+{#                                                        data-live-search-placeholder="请输入检索内容"#}
+{#                                                        data-none-selected-text="请选择操作系统类型"#}
+{#                                                        data-width="100%"#}
+{#                                                        name="os_type" id="os_type">#}
+{#                                                    <option name="os_type" value="" selected>全部类型</option>#}
+{#                                                    <option name="os_type" value="RedHat">RedHat</option>#}
+{#                                                    <option name="os_type" value="CentOS">CentOS</option>#}
+{#                                                    <option name="os_type" value="Solaris">Solaris</option>#}
+{#                                                    <option name="os_type" value="SLES">SLES</option>#}
+{#                                                    <option name="os_type" value="AIX">AIX</option>#}
+{#                                                    <option name="os_type" value="HP-UX">HP-UX</option>#}
+{#                                                </select>#}
+{#                                            </div>#}
+{##}
+{#                                        </div>#}
+{#                                        <input type="hidden" class="form-control" name="model" value="model">#}
+{#                                        <input type="hidden" class="form-control" id="ans_uuid" name="ans_uuid"#}
+{#                                               value="{{ ans_uuid }}">#}
+{#                                        <div class="form-group">#}
+{#                                            <label class="col-lg-2 col-md-2 col-sm-3 control-label">中间件类型</label>#}
+{#                                            <div class="col-lg-3 col-md-3 col-sm-3">#}
+{#                                                <select class="selectpicker" data-live-search="true"#}
+{#                                                        data-live-search-placeholder="请输入检索内容"#}
+{#                                                        data-none-selected-text="请选择中间件类型"#}
+{#                                                        data-width="100%"#}
+{#                                                        name="middleware_type" id="middleware_type">#}
+{#                                                    <option name="middleware_type" value="" selected>全部类型</option>#}
+{#                                                    <option name="middleware_type" value="tomcat">Tomcat</option>#}
+{#                                                    <option name="middleware_type" value="apache">Apache</option>#}
+{#                                                    <option name="middleware_type" value="nginx">nginx</option>#}
+{#                                                    <option name="middleware_type" value="zabbix">Zabbix</option>#}
+{#                                                    <option name="middleware_type" value="openssh">OpenSSH</option>#}
+{#                                                    <option name="middleware_type" value="openssl">OpenSSL</option>#}
+{#                                                    <option name="middleware_type" value="struts">Struts</option>#}
+{#                                                    <option name="middleware_type" value="weblogic">weblogic</option>#}
+{#                                                    <option name="middleware_type" value="jboss">JBoss</option>#}
+{#                                                    <option name="middleware_type" value="websphere">WebSphere</option>#}
+{#                                                    <option name="middleware_type" value="sudo">SUDO</option>#}
+{#                                                    <option name="middleware_type" value="python">Python</option>#}
+{#                                                    <option name="middleware_type" value="resin">Resin</option>#}
+{#                                                    <option name="middleware_type" value="axis">Axis</option>#}
+{#                                                    <option name="middleware_type" value="JDK">JDK</option>#}
+{#                                                </select>#}
+{#                                            </div>#}
+{##}
+{#                                            <label class="col-lg-2 col-md-2 col-sm-3 control-label">数据库类型</label>#}
+{#                                            <div class="col-lg-3 col-md-3 col-sm-3">#}
+{#                                                <select class="selectpicker" data-live-search="true"#}
+{#                                                        data-live-search-placeholder="请输入检索内容"#}
+{#                                                        data-none-selected-text="请选择数据库类型"#}
+{#                                                        data-width="100%"#}
+{#                                                        name="db_type" id="db_type">#}
+{#                                                    <option name="db_type" value="" selected>全部类型</option>#}
+{#                                                    <option name="db_type" value="oracle">Oracle</option>#}
+{#                                                    <option name="db_type" value="mysql">MySQL</option>#}
+{#                                                    <option name="db_type" value="db2">DB2</option>#}
+{#                                                    <option name="db_type" value="sqlserver">SqlServer</option>#}
+{#                                                    <option name="db_type" value="sybase">Sybase</option>#}
+{#                                                    <option name="db_type" value="postgresql">PostgreSQL</option>#}
+{#                                                    <option name="db_type" value="informix">INFORMIX</option>#}
+{#                                                </select>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="form-group">#}
+{#                                            <label class="col-lg-2 col-md-2 col-sm-3 control-label">平台服务器<span#}
+{#                                                    style="color:red;"> *</span></label>#}
+{#                                            <div class="col-lg-3 col-md-3 col-sm-3">#}
+{#                                                <select multiple class="selectpicker" data-actions-box="true"#}
+{#                                                        data-select-all-text="全选"#}
+{#                                                        data-deselect-all-text="未选" data-none-selected-text="请选择服务器"#}
+{#                                                        data-live-search="true"#}
+{#                                                        data-width="100%"#}
+{#                                                        data-live-search-placeholder="请输入检索内容" name="ansible_server"#}
+{#                                                        id="ansible_server" required>#}
+{#                                                </select>#}
+{#                                            </div>#}
+{#                                            <label class="col-lg-2 col-md-2 col-sm-3 control-label">SUDO模式</label>#}
+{#                                            <div class="col-lg-3 col-md-3 col-sm-3">#}
+{#                                                <select class="selectpicker"#}
+{#                                                        data-width="100%"#}
+{#                                                        data-none-selected-text="请选择是否SUDO模式"#}
+{#                                                        name="sudo_type" id="sudo_type">#}
+{#                                                    <option name="sudo_type" value="0" selected>否</option>#}
+{#                                                    <option name="sudo_type" value="1">是</option>#}
+{#                                                </select>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="form-group">#}
+{#                                            <label class="col-lg-2 col-md-2 col-sm-3 control-label">Ad-Hoc类型<span#}
+{#                                                    style="color:red;"> *</span></label>#}
+{#                                            <div class="col-lg-3 col-md-3 col-sm-3">#}
+{#                                                <select class="form-control selectpicker" name="ansible_model" id="ansible_model"#}
+{#                                                        onchange="javascript:oBtAnsibleModel();">#}
+{#                                                    <option value="ping" name="ansible_model">ping</option>#}
+{#                                                    <option value="shell" name="ansible_model">shell</option>#}
+{#                                                    <option value="yum" name="ansible_model">yum</option>#}
+{#                                                    <option value="copy" name="ansible_model">copy</option>#}
+{#                                                    <option value="service" name="ansible_model">service</option>#}
+{#                                                    <option value="file" name="ansible_model">file</option>#}
+{#                                                    <option value="user" name="ansible_model">user</option>#}
+{#                                                    <option value="synchronize" name="ansible_model">sync</option>#}
+{#                                                    <option value="cron" name="ansible_model">cron</option>#}
+{#                                                    <option value="get_url" name="ansible_model">wget</option>#}
+{#                                                    <option value="raw" name="ansible_model">raw</option>#}
+{#                                                    <option value="custom" name="ansible_model">自定义</option>#}
+{#                                                </select>#}
+{#                                            </div>#}
+{#                                            <label class="col-lg-2 col-md-2 col-sm-3 control-label">Ad-Hoc参数</label>#}
+{#                                            <div class="col-lg-3 col-md-3 col-sm-3">#}
+{#                                                <input id="ansible_args" type="text" class="form-control"#}
+{#                                                       placeholder="输入模块参数" name="ansible_agrs" value="">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{##}
+{#                                        <div id="custom_model" class="form-group" style="display:none;">#}
+{#                                            <label class="col-sm-2 control-label">自定义Ad-Hoc</label>#}
+{#                                            <div class="col-sm-3">#}
+{#                                                <input id="custom_model_value" type="text" class="form-control"#}
+{#                                                       placeholder="输入模块" name="custom_model" value="">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="col-lg-10 col-md-10 col-sm-12" style="text-align: right;padding: 0">#}
+{#                                                <button type="button" class="btn btn-primary"#}
+{#                                                        onclick="runAnsibleModel(this)">执行#}
+{#                                                </button>#}
+{#                                         </div>#}
+{#                                    </fieldset>#}
+{#                                </form>#}
+{#                            </div>#}
+{#                            <!-- /.col-lg-6 (nested) -->#}
+{#                        </div>#}
+{#                        <div class="row">#}
+{#                            <div class="col-lg-12">#}
+{#                                <legend><i class="fa  fa-paper-plane-o"></i> 执行结果</legend>#}
+{#                                <pre id="pre" class="traditional" style="height: 400px">#}
+{#				                        <div id="result">#}
+{#				                        </div>#}
+{#				                    </pre>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <!-- /.row (nested) -->#}
+{#                    </div>#}
+{#                    <!-- /.panel-body -->#}
+{#                </div>#}
+{#                <!-- /.panel -->#}
+{#            </div>#}
+{#            <!-- /.col-lg-12 -->#}
+{#        </div>#}
+{#    </div>#}
+    <div data-backdrop="static" class="modal fade" tabindex="-1" id="myModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">文件上传</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="file_model" class="form-group" style="display:none;">
+{#                        <label class="col-sm-3 control-label">文件上传<span style="color:red;"> *</span></label>#}
+{#                        <div class="col-sm-4">#}
+{#                            <input type="file" name="file" id="file_upload">#}
+{#                            <h5>注：上传默认目录/data/upload/,只允许上传不大于100M的文件</h5>#}
+{#                        </div>#}
+{#                        <div class="col-sm-2">#}
+{#                            <input type="button" id="upload" class="btn btn-primary btn-sm" value="上传">#}
+{#                        </div>#}
+                        <label class="control-label uploadLable">文件上传<span style="color:red;"> *</span>
+                            <div class="input-group">
+                                <input type="text" class="form-control" onfocus="file_uploadTap()" id="fileText">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" id="upload">上传</button>
+                                </span>
+                            </div>
+                            <input type="file" name="file" id="file_upload" style="display: none" onchange="changeFileVal(this)">
+                            <h5 style="color:#444;">注：上传默认目录/data/upload/,只允许上传不大于100M的文件</h5>
+                        </label>
+
+                        <div class="upload-mask"></div>
+                        <div class="upload-component">
+                            <div class="upload-close">
+                                <span class="upload-close-span">关闭</span>
+                            </div>
+                            <div class="upload-content">
+                                <div class="progress   ">
+                                    <span class="upload-text"></span>
+                                    <span class="uploaded progress-bar progress-bar-success progress-striped" ></span>
+                                </div>
+                                <div class="confirm-cancel">
+                                    <button class="confirm btn btn-default">确认</button>
+                                    <button class="cancel btn btn-default">取消</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div>
+    </div>
+    <!--page-wrapper common Function-->
+    <script>
+             $(document).ready(function () {
+                 var autoinput = $("input.auto-input");
+                 autoinput.attr('size', 4);
+                 autoinput.keyup(function () {
+                     $(this).attr('size', $(this).val().length > 4 ? $(this).val().length : 4);
+                 });
+                 autoinput.keydown(function () {
+                     $(this).keyup()
+                 });
+             });
+    </script>
+    <script src="../../static/js/config.js"></script>
+    <script type="text/javascript">
+
+
+        $(function () {
+            // 弹出层 start
+            // var $uploadSpan = $('.upload-span');
+            var $uploadMask = $('.upload-mask');
+            var $uploadContent = $('.upload-component');
+            var $closeConfirmCancel = $('.upload-close-span,.confirm,.cancel');
+            var $uploadTextSpan = $('.upload-text');
+
+            $("#middleware_type").change(function () {
+                $('#ansible_server').html('');
+                $('#ansible_server').selectpicker('refresh');
+                var group = $("#ansible_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+
+            $("#db_type").change(function () {
+                $('#ansible_server').html('');
+                $('#ansible_server').selectpicker('refresh');
+                var group = $("#ansible_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+            function showMask() {
+                $(".upload-mask,.upload-component").css({
+                    display: 'block'
+                });
+                // progressBar();
+                // $uploadSpan.off('click', showMask);
+            }
+
+            function hiddenMask() {
+                //$uploadMask.css({
+                //display: 'none'
+                //});
+                $(".upload-mask,.upload-component").css({
+                    display: 'none'
+                });
+                $uploadTextSpan.text('').next().css({
+                    width: 0
+                });
+
+                // $uploadSpan.on('click', showMask);
+            }
+
+            function closeConfirmCancel() {
+                $uploadContent.css({
+                    display: 'none'
+                });
+                $uploadTextSpan.text('').next().css({
+                    width: 0
+                });
+                hiddenMask();
+            }
+
+            // 模拟进度
+            function progressBar(percent) {
+                var uploaded;
+                uploaded = percent + '%';
+                $uploadTextSpan.text(uploaded).next().css({
+                    width: uploaded
+                });
+                if (percent === 100) {
+                    //clearInterval(test);
+                    $uploadTextSpan.text('上传完成');
+                    $('.confirm-cancel span').css({
+                        cursor: 'pointer'
+                    });
+                    $('.confirm').addClass('btn-primary').removeClass("btn-default");
+                  /*  $('.cancel').css({
+                        backgroundColor: 'rgb(175,194,211)'
+                    });*/
+                    $closeConfirmCancel.on('click', closeConfirmCancel);
+                } else {
+                    $closeConfirmCancel.off('click', closeConfirmCancel);
+                    $('.upload-close-span').on('click', function () {
+                        //clearInterval(test);
+                        closeConfirmCancel();
+                    });
+                }
+            }
+
+            // $uploadSpan.on('click', showMask);
+            // 弹出层  end
+
+            changeServer('0');
+
+            $("#ansible_group").change(function () {
+                $('#ansible_server').html('');
+                $('#ansible_server').selectpicker('refresh');
+                var group = $("#ansible_group").val();
+                if (group[0] == "0") {
+                    $('#ansible_group').selectpicker('deselectAll');
+                    $('#ansible_group').selectpicker('render')
+                    $('#ansible_group').selectpicker('val', '0')
+                }
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+            $("#os_type").change(function () {
+                $('#ansible_server').html('');
+                $('#ansible_server').selectpicker('refresh');
+                var group = $("#ansible_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+            $("#file_upload").change(function () {
+                $('#ansible_args').val('src=/data/upload/' + $('#file_upload')[0].files[0].name + ' ' + 'dest=/tmp');
+            })
+
+            $("#upload").click(function () {
+
+                var form_data = new FormData();
+                var file_info = $('#file_upload')[0].files[0];
+                if (((file_info.size).toFixed(2)) > (100 * 1024 * 1024)) {
+                    window.wxc.xcConfirm("请上传小于100M的文件", window.wxc.xcConfirm.typeEnum.error);
+                    return false;
+                }
+                showMask();
+                form_data.append('file', file_info);
+                $.ajax({
+                    "type": "post",
+                    "url": "/apps/upload",
+                    "processData": false,  // tell jquery not to process the data
+                    "contentType": false, // tell jquery not to set contentType
+                    "data": form_data,
+                    "success": function (resp) {
+                        if (resp["code"] == 0) {
+                            window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                            console.log(resp);
+                            $('#myModal').modal('hide');
+                            $('#ansible_args').val();
+                        }
+                        else {
+                            window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                        }
+                        hiddenMask();
+                    },
+                    "error": function (response) {
+                        window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                        hiddenMask();
+                    },
+                    "xhr": function () {
+                        myXhr = $.ajaxSettings.xhr();
+                        if (myXhr.upload) {
+                            myXhr.upload.addEventListener('progress', function (e) {
+                                if (e.lengthComputable) {
+                                    var percent = Math.floor(100 * e.loaded / e.total);
+                                    // if(percent <= 100) {
+                                    // 	$("#J_progress_bar").progress('set progress', percent);
+                                    // 	$("#J_progress_label").html('已上传：'+percent+'%');
+                                    // }
+                                    // if(percent >= 100) {
+                                    // 	$("#J_progress_label").html('文件上传完毕，请等待...');
+                                    // 	$("#J_progress_label").addClass('success');
+                                    // }
+                                    progressBar(percent);
+                                }
+                            }, false);
+                        }
+                        return myXhr;
+                    },
+                });
+            });
+
+        });
+
+        function changeServer(groupId) {
+            $.ajax({
+                "type": "post",
+                "url": "/apps/model/deviceInfo",
+                "data": {
+                    "groupId": groupId,
+                    "os_type": $("#os_type").val(),
+                    "middleware_type": $("#middleware_type").val(),
+                    "db_type": $("#db_type").val()
+
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        var html = '';
+                        for (var i = 0; i < resp["data"].length; i++) {
+                            html += "<option value='" + resp["data"][i].device_id + "'>" + resp["data"][i].device_id + "</option>";
+                        }
+
+                        $("#ansible_server").append(html);
+                        $("#ansible_server").selectpicker('refresh');
+                    }
+                },
+            });
+        }
+
+
+        function oBtAnsibleModel() {
+            var obj = document.getElementById("ansible_model");
+            var index = obj.selectedIndex;
+            var value = obj.options[index].value;
+            if (value == "raw") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = "uptime";
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "shell") {
+                document.getElementById("ansible_args").value = "";
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "ping") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = "";
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "yum") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = "name=httpd state=present";
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "service") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = "name=httpd state=restarted enabled=yes";
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "cron") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = 'name="sync time" minute=*/3 hour=* day=* month=* weekday=* job="/usr/sbin/ntpdate window.time.com"';
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "file") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = 'src=/data/upload/test.txt dest=/tmp/test.txt owner=root group=root mode=700 state=touch';
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "copy") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = 'src=/root/test.txt dest=/tmp/test.txt';
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "";
+                $('#myModal').modal();
+            }
+            else if (value == "user") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = "name=welliam password='$6yshUMNL8dhY'";
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "synchronize") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = "src=/root/a dest=/tmp/ compress=yes --exclude=.git";
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "get_url") {
+                document.getElementById("custom_model_value").value = "";
+                document.getElementById("ansible_args").value = "url=http://url/test.tar.gz dest=/tmp";
+                document.getElementById("custom_model").style.display = "none";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else if (value == "custom") {
+                document.getElementById("custom_model").style.display = "";
+                document.getElementById("ansible_args").value = "";
+                document.getElementById("file_model").style.display = "none";
+            }
+            else {
+                document.getElementById("ansible_args").value = "";
+                document.getElementById("file_model").style.display = "none";
+            }
+            $('#ansible_args').attr('size', $('#ansible_args').val().length > 4 ?$('#ansible_args').val().length : 4);
+        }
+
+
+        function runAnsibleModel(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var form = document.getElementById('ansibleModelRun');
+            var post_data = {};
+            for (var i = 1; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                var project = name.indexOf("ansible_model");
+                if (project == 0 && value.length == 0 && name != "ansible_agrs") {
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+            }
+            ;
+            $("#result").html("服务器正在处理，请稍等。。。");
+            /* 轮训获取结果 开始  */
+            var interval = setInterval(function () {
+                $.ajax({
+                    url: '/apps/run/',
+                    type: 'post',
+                    data: $('#ansibleModelRun').serialize(),
+                    success: function (result) {
+                        if (result["msg"] !== null) {
+                            $("#result").append("<p>" + result["msg"] + "</p>");
+
+                            $("#pre").scrollTop($("#result").height());
+
+                            //var height = $('#result').height();
+                            //if(height > 100) {
+                            //    $("#pre").css('height','auto');
+                            //}
+                            //else {
+                            //	$("#pre").css('height','200');
+                            //}
+                            if (result["msg"].indexOf("[Done]") == 0) {
+                                clearInterval(interval);
+                                window.wxc.xcConfirm("Ansible执行完成", window.wxc.xcConfirm.typeEnum.success);
+                                btnObj.removeAttr('disabled');
+                            }
+                        }
+                    },
+                    error: function (response) {
+                        btnObj.removeAttr('disabled');
+                        clearInterval(interval);
+                    }
+                });
+            }, 200);
+
+// 	    /* 轮训获取结果结束  */
+            $.ajax({
+                url: '/apps/model/', //请求地址
+                type: "POST",  //提交类似
+                data: $('#ansibleModelRun').serialize(),  //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    if (response["code"] == "500") {
+                        clearInterval(interval);
+                        btnObj.removeAttr('disabled');
+                        window.wxc.xcConfirm(response["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("运行失败", window.wxc.xcConfirm.typeEnum.error);
+                    clearInterval(interval);
+                }
+            })
+        }
+        function file_uploadTap() {
+                $("#file_upload").trigger("click")
+        }
+        function changeFileVal(op) {
+            $("#fileText").val($(op).val())
+        }
+        {% if errorInfo %}
+            window.wxc.xcConfirm("{{errorInfo}}", window.wxc.xcConfirm.typeEnum.error);
+        {% endif %}
+    </script>
+
+{% endblock %}

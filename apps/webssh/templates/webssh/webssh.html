@@ -1,0 +1,231 @@
+{% extends 'index.html' %}
+{% block page-content %}
+<div id="page-wrapper" class="websshView">
+
+    <div class="row">
+         <div class="col-lg-12">
+              <h1 class="page-header"><i class="fa fa-desktop"></i>&nbsp;<span>WebSSH</span> </h1>
+         </div>
+                <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+         <div class="col-lg-12">
+            <div class="sshPanel sshPanel-default">
+                <div class="sshPanel-body" style="padding: 0">
+                 <form class="form-horizontal" role="form" style="float: right">
+                    <label for="param1" class="control-label">平台分组
+                        <span style="color:red;">*</span>
+                    </label>
+                    <select multiple class="selectpicker auto-select select-sm" data-actions-box="true" data-select-all-text="全选"
+                            data-deselect-all-text="未选" data-none-selected-text="请选择平台" data-live-search="true"
+                            data-live-search-placeholder="请输入检索内容"  name="ansible_group"  id="ansible_group" required>
+                        <option name="group" value="0">全部平台</option>
+                        {% for ds in groupList %}
+                            <option name="group" value="{{ds.id}}">{{ds.name}}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="param2" class="control-label">平台主机
+                        <span style="color:red;">*</span>
+                    </label>
+                    <select multiple class="selectpicker auto-select select-sm" data-actions-box="true" data-select-all-text="全选"
+                                                    data-deselect-all-text="未选" data-none-selected-text="请选择主机" data-live-search="true"
+                                                    data-live-search-placeholder="请输入检索内容" name="ansible_server"  id="ansible_server" required>
+
+                                            </select>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="refreshHost()">执行</button>
+                 </form>
+{#                    <form class="form-horizontal row" role="form">#}
+{#                        <div class="form-group col-lg-4 col-md-4 col-sm-6">#}
+{#                            <label for="param1" class="control-label">平台分组#}
+{#                                <span style="color:red;">*</span>#}
+{#                            </label>#}
+{#                            <select multiple class="selectpicker" data-actions-box="true" data-select-all-text="全选"#}
+{#                                    data-deselect-all-text="未选" data-none-selected-text="请选择平台" data-live-search="true"#}
+{#                                    data-live-search-placeholder="请输入检索内容"  name="ansible_group"  id="ansible_group" required>#}
+{#                                <option name="group" value="0">全部平台</option>#}
+{#                                {% for ds in groupList %}#}
+{#                                    <option name="group" value="{{ds.id}}">{{ds.name}}</option>#}
+{#                                {% endfor %}#}
+{#                            </select>#}
+{##}
+{#                        </div>#}
+{#                        <div class="form-group col-lg-4 col-md-4 col-sm-6">#}
+{#                            <label for="param2" class="control-label">平台主机#}
+{#                                <span style="color:red;">*</span>#}
+{#                            </label>#}
+{#                            <select multiple class="selectpicker" data-actions-box="true" data-select-all-text="全选"#}
+{#                                                            data-deselect-all-text="未选" data-none-selected-text="请选择主机" data-live-search="true"#}
+{#                                                            data-live-search-placeholder="请输入检索内容" name="ansible_server"  id="ansible_server" required>#}
+{#                                                    </select>#}
+{##}
+{#                        </div>#}
+{##}
+{#                        <div class="form-group col-lg-4 col-md-4 col-sm-12" style="text-align: right">#}
+{#                            <label class="control-label hidden-label" style="width:80%"></label>#}
+{#                            <button type="button" class="btn btn-primary" onclick="refreshHost()">执行</button>#}
+{#                        </div>#}
+{#                    </form>#}
+                </div>
+            </div>
+         </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-2 col-md-12 col-sm-12" style="margin-top: 10px">
+           <div class="chat-panel panel panel-info">
+
+                        <div class="panel-heading">
+                            <i class="fa fa-laptop fa-fw"></i> 主机列表
+                        </div>
+                        <!-- /.panel-heading -->
+           		        <div id="webssh_xx" class="panel-body" style="width: 100%;height:750px;">
+                            <table id="myWebsshTable" class="table table-hover">
+
+                                {% for device_info in deviceInfoList  %}
+                                <tr style="display:none">
+
+                                        <td>
+                                            <a onclick="addTab('{{device_info.device_id}}','/webssh/websshFrame/{{device_info.device_id}}/')">
+                                            <span class="text-muted small"><button type="button" class="btn btn-outline btn-success btn-xs">连接
+                                            </button></span>
+                                            </a>
+                                        </td>
+
+                                        <td><strong>{{ device_info.device_id }}</strong>
+                                        </td>
+
+
+                                </tr>
+                                {% endfor %}
+
+                            </table>
+                        </div>
+                    </div>
+
+
+		</div>
+		<div class="col-lg-10 col-md-12 col-sm-12" style="margin-top: 10px">
+			<div id="webssh_tt" class="easyui-tabs" style="height:600px">
+
+				<div title=">" id="gateone_container">
+
+                    <!--<div id="gateone"></div>  -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+     <script>
+             $(document).ready(function () {
+                 var autoinput = $("input.auto-input");
+                 autoinput.attr('size', 4);
+                 autoinput.keyup(function () {
+                     $(this).attr('size', $(this).val().length > 4 ? $(this).val().length : 4);
+                 });
+                 autoinput.keydown(function () {
+                     $(this).keyup()
+                 });
+             });
+        </script>
+    <script src="../../static/js/config.js"></script>
+<script>
+// 点击"执行"，刷新主机列表
+function refreshHost(){
+    hostList = $('#ansible_server').val();
+    table = document.getElementById("myWebsshTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        if (td) {
+              if (hostList.indexOf(td.innerText.trim()) == -1) {
+                tr[i].style.display = "none";
+              } else {
+                tr[i].style.display = "";
+              }
+            }
+    }
+}
+
+        $(document).ready(function () {
+            var windowHeight = $(window).height();
+            var ttHeight = $("#webssh_tt").offset().top
+            var xxHeight = $("#webssh_xx").offset().top
+            if (ttHeight < windowHeight - 20) {
+                $(webssh_tt).height(windowHeight - ttHeight - 20);
+            }
+            if (xxHeight < windowHeight - 20) {
+                $(webssh_xx).height(windowHeight - xxHeight - 20);
+            }
+
+        });
+
+</script>
+
+
+<script type="text/javascript" src="/static/js/gateone.js"></script>
+
+<script>
+// 选择平台后，根据groupId去ajax刷新平台服务器的列表
+function changeServer(groupId){
+    $.ajax({
+        url : '/api/tf/asset/deviceinfo/' + groupId,
+        type : 'get',
+        data : {groupId : groupId},
+        success : function(result){
+            if(null != result) {
+                var html = '';
+                for(var i=0; i<result.length; i++) {
+                    html += "<option value='" + result[i].device_id + "'>" + result[i].device_id + "</option>";
+                }
+
+                $("#ansible_server").append(html);
+                $("#ansible_server").selectpicker('refresh');
+            }
+        }
+    });
+}
+
+$(function(){
+    changeServer('0');    // groupId为0时，默认返回所有device
+
+    $("#ansible_group").change(function(){
+        $('#ansible_server').html('');
+        $('#ansible_server').selectpicker('refresh');
+        var group = $("#ansible_group").val();
+        $.each(group, function(i,val){
+            changeServer(val);
+            if(val == 0){
+                return false
+            }
+        });
+    });
+
+});
+</script>
+
+
+
+
+	<link rel="stylesheet" type="text/css" href="/static/dist/css/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/static/dist/css/icon.css">
+<!-- 	<script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script> -->
+	<script type="text/javascript" src="/static/js/jquery.easyui.min.js"></script>
+	<script>
+		// 点击"连接"时，在frame中创建Tab用于显示webssh终端，如果已经存在则选中该tab
+		function addTab(title, url){
+			if ($('#webssh_tt').tabs('exists', title)){
+				$('#webssh_tt').tabs('select', title);
+			} else {
+				var content = '<iframe  scrolling="yes"frameborder="no" border="0" marginwidth="0" marginheight="0" src="'+url+'" style="width:100%;height:99%;"></iframe>';
+				$('#webssh_tt').tabs('add',{
+					title:title,
+					content:content,
+					closable:true
+				});
+			}
+		}
+	</script>
+
+{% endblock %}
+

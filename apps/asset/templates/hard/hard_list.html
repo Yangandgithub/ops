@@ -1,0 +1,586 @@
+{% extends 'index.html' %}
+{% block page-content %}
+    {% load static %}
+
+    <div id="page-wrapper" class="hard_list">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa   fa-dashboard"></i>&nbsp;<span>主机列表</span> </h1>
+            </div>
+        </div>
+{#        <div class="row">#}
+{#            <div class="col-lg-12">#}
+{#                <div class="panel panel-default">#}
+{#                    <!-- /.panel-heading -->#}
+{#                    <div class="panel-body">#}
+{#                    <div class="well">#}
+{#                            <h4>设备资产更新说明</h4>#}
+{#                            <ol>#}
+{#                                <li><p>点击&nbsp;<i class="glyphicon glyphicon-edit"></i>&nbsp;编辑设备信息</p></li>#}
+{#                                <li><p>点击&nbsp;<i class="glyphicon glyphicon-trash"></i>&nbsp;删除设备信息</p></li>#}
+{#                            </ol>#}
+{#                          <!--  <a class="btn btn-default btn-lg btn-block" href="/asset/hard/add/"><i#}
+{#                                    class="fa fa-plus-circle "></i>新增资产</a>#}
+{#                            <button class="btn btn-default btn-lg btn-block" onclick="editSSHConfig()"><i#}
+{#                                    class="fa fa-plus-circle "></i>修改代理配置#}
+{#                            </button>-->#}
+{#                        </div>#}
+{##}
+{##}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-database"></i>&nbsp;主机明细
+                    </div>
+
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="queryForm">
+                             <form class="form-inline" style="display: inline-block">
+                                <label class="control-label">所属平台</label>
+                                <select class="selectpicker auto-select select-sm" data-live-search="true"
+                                        data-live-search-placeholder="请输入检索内容" data-none-selected-text="请选择平台"
+                                        name="platform_id_query" id="platform_id_query">
+                                    <option name="platform_id_query" value="0" selected>全部平台</option>
+                                    {% for ds in groupList %}
+                                        <option name="platform_id_query" value="{{ ds.id }}">{{ ds.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label class="control-label">IP地址</label>
+                                <input class="form-control auto-input input-sm" id="ipAdd" name="ipAdd" type="text" placeholder="IP地址">
+                                <input type="button"  id="query" class="btn btn-primary queryBtn btn-sm" value="查询">
+
+                             </form>
+                            <a class="btn btn-default btn-warning btn-sm" href="/asset/hard/add/"><i
+                                    class="fa fa-plus-circle"></i>&nbsp;新增资产</a>
+                            <button class="btn btn-default btn-success btn-sm" onclick="editSSHConfig()"><i
+                                    class="fa fa-plus-circle "></i>&nbsp;修改代理配置
+                            </button>
+                            <input type="file" name="importFile" id="hart_list_importFile" value="" style="display: none" onchange="dataImportChangeTap(this)">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-info btn-sm" onclick="dataImportTap()">数据导入</button>
+                                <button type="button" class="btn btn-info btn-sm" onclick="dataExportTap()">数据导出</button>
+                            </div>
+                        </div>
+                        <table id="dataTableList"
+                               class="table table-striped table-bordered table-advance table-hove displayr nowrap"
+                               style="word-break:break-all;width:100%">
+                            <thead>
+                            <tr>
+                                <th class="text-center">设备ID</th>
+                                <th class="text-center">所属平台</th>
+                                <th class="text-center">服务器IP</th>
+                                <th class="text-center">服务器操作系统</th>
+                                <th class="text-center">服务器操作系统版本</th>
+                                <!--<th class="text-center">操作</th>-->
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+
+                        </table>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modfiyModal" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myZoneModalLabel">
+                        修改主机
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form" class="form-horizontal">
+                        <div class="form-group">
+                            <label for="device_id" class="col-sm-4 control-label">设备编码</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="device_id" name="device_id">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="platform_id" class="col-sm-4 control-label">所属平台</label>
+                            <select class="selectpicker col-sm-6 " data-live-search="true"
+                                    data-live-search-placeholder="请输入检索内容"
+                                    data-none-selected-text="请选择平台" name="platform_id" id="platform_id" required>
+                                {% for ds in groupList %}
+                                    <option name="platform_id" value="{{ ds.id }}">{{ ds.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ansible_ssh_host" class="col-sm-4 control-label">服务器IP</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="ansible_ssh_host" name="ansible_ssh_host">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ansible_ssh_port" class="col-sm-4 control-label">服务器端口</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="ansible_ssh_port" name="ansible_ssh_port">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ansible_ssh_user" class="col-sm-4 control-label">服务器用户</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="ansible_ssh_user" name="ansible_ssh_user">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="modfiy()">
+                        提交
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="modal fade" id="modSSHConfigDialog" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title" id="myZoneModalLabel">修改代理配置</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="modSSHConfig" name="modSSHConfig" style="height: 500px;"></div>
+                </div>
+                <!--VRO stands for: validation result of-->
+                <pre id="VRModSSHContent" class="hide VRModSSHContent"></pre>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="saveSSHConfig()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+     <script>
+         $(document).ready(function () {
+             var autoinput = $("input.auto-input");
+             autoinput.attr('size', 4);
+             autoinput.keyup(function () {
+                 $(this).attr('size', $(this).val().length > 4 ? $(this).val().length : 4);
+             });
+             autoinput.keydown(function () {
+                 $(this).keyup()
+             });
+         });
+    </script>
+
+    <script src="../../static/js/config.js"></script>
+    <script type="text/javascript">
+
+        var oTable = null;
+        var exportTable=[];
+        $(document).ready(function () {
+             initTable();
+
+            $("#query").click(function () {
+                initTable();
+            })
+        });
+
+        var initTable = function () {
+            exportTable=[];
+            if (oTable != null) {
+                oTable.fnClearTable(0);
+                oTable.fnDraw(); //重新加载数据
+                oTable.fnDestroy();
+            }
+            oTable = $('#dataTableList').dataTable({
+                "fnPreDrawCallback": function () {
+                    $('.dataTable_header').remove();
+                },
+                "aLengthMenu": [10, 20, 50, 100], //更改显示记录数选项
+                "bProcessing": true,
+                //"scrollX": true,
+                "bStateSave": true, //是否打开客户端状态记录功能,此功能在ajax刷新纪录的时候不会将个性化设定回复为初始化状态
+                "bJQueryUI": false, //是否使用 jQury的UI theme
+                "bFilter": false,// 搜索栏
+                "bLengthChange": true, //关闭每页显示多少条数据
+                "bSort": false,
+                "bStateSave": false,
+                "bServerSide": true,
+                "iDisplayStart": 0,
+                "iDisplayLength": 10,
+                "bScrollCollapse": true, //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+                "bAutoWidth": false, //是否自适应宽度
+                "aoColumns": [//设定各列宽度
+                    {"mData": "device_id", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "platform_name", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "ansible_ssh_host", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "os_type", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "os_version", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                   /* {"mData": null, "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},*/
+                ],
+                "oLanguage": {
+                    "sLengthMenu": "每页显示 _MENU_条",
+                    "sZeroRecords": "没有找到符合条件的数据",
+                    "sProcessing": " 数据加载中， 请稍候......",
+                    "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                    "sInfoEmpty": "没有记录",
+                    "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                    "sSearch": "",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "前一页",
+                        "sNext": "后一页",
+                        "sLast": "尾页"
+                    }
+                },
+                "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                    var device_id = aData.device_id;
+                   var html = '<button  type="button" class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="编辑设备" ' +
+                        'onclick="modfiyView(\'' + device_id + '\')"><i class="glyphicon glyphicon-edit"></i></button>&nbsp;' +
+                        '<button  type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="left" title="删除设备" ' +
+                        'onclick="del(this,\'' + device_id + '\')" ><i class="glyphicon glyphicon-trash"></i></button>';
+                    var device_id_html='<div onclick="operationTap(this,\''+device_id+'\')"><a>'+device_id+'</a></div>';
+                    $('td:eq(0)', nRow).html(device_id_html);
+                    var exportData={
+                        index:iDisplayIndex,
+                        aData:aData
+                    };
+                    exportTable.push(exportData);
+                    //$('td:eq(5)', nRow).html(html);//设置该列的值
+                    return nRow;
+                },
+                "fnInitComplete": function (oSettings, json) {
+                    $("[data-toggle='tooltip']").tooltip();
+                },
+                "sAjaxSource": "/asset/hard/select/",
+                "fnServerData": retrieveData
+            });
+        }
+
+
+        function retrieveData(sSource, aoData, fnCallback) {
+            var iDisplayStart = 0;
+            var iDisplayLength = 10;
+            var sEcho;
+            for (var i = 0; i < aoData.length; i++) {
+                if (aoData[i].name == "iDisplayStart") {
+                    /*开始页数*/
+                    iDisplayStart = aoData[i].value;
+                } else if (aoData[i].name == "iDisplayLength") {
+                    /*记录条数*/
+                    iDisplayLength = aoData[i].value;
+                }
+                else if (aoData[i].name == "sEcho") {
+                    /*记录条数*/
+                    sEcho = aoData[i].value;
+                }
+            }
+            var page = (iDisplayStart / iDisplayLength) + 1;
+            $.ajax({
+                "type": "post",
+                "url": sSource,
+                "dataType": "json",
+                "data": {
+                    "platform_id": $("#platform_id_query").val(),
+                    "ipAdd": $("#ipAdd").val(),
+                    "aoData": aoData,
+                    "iDisplayStart": iDisplayStart,
+                    "iDisplayLength": iDisplayLength,
+                    "page": page,
+                    "sEcho": sEcho
+                },
+                "success": function (resp) {
+                    fnCallback(resp);
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("数据格式不合法~", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+
+        function modfiyView(device_id) {
+            $.ajax({
+                "type": "post",
+                "url": "/asset/hard/selectbyid/",
+                "dataType": "json",
+                "data": {
+                    "device_id": device_id,
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        var data = resp["data"];
+                        $("#device_id").attr("disabled", true);
+                        $("#device_id").val(data.device_id);
+                        $("#platform_id").val(data.platform_id);
+                        $("#ansible_ssh_host").val(data.ansible_ssh_host);
+                        $("#ansible_ssh_user").val(data.ansible_ssh_name);
+                        $("#ansible_ssh_port").val(data.ansible_ssh_port);
+                        $("#modfiyModal").modal('show');
+                    }
+                    else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        function modfiy() {
+            var data = {
+                "device_id": $("#device_id").val(),
+                "platform_id": $("#platform_id").val(),
+                "platform_name": $("#platform_id").find("option:selected").text(),
+                "ansible_ssh_host": $("#ansible_ssh_host").val(),
+                "ansible_ssh_user": $("#ansible_ssh_user").val(),
+                "ansible_ssh_port": $("#ansible_ssh_port").val(),
+                "mode": "update"
+            };
+            $.ajax({
+                "type": "post",
+                "url": "/asset/hard/update/",
+                "dataType": "json",
+                "data": {
+                    "device_id": $("#device_id").val(),
+                    "platform_id": $("#platform_id").val(),
+                    "platform_name": $("#platform_id").find("option:selected").text(),
+                    "ansible_ssh_host": $("#ansible_ssh_host").val(),
+                    "ansible_ssh_user": $("#ansible_ssh_user").val(),
+                    "ansible_ssh_port": $("#ansible_ssh_port").val(),
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        initTable();
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                        $("#modfiyModal").modal('hide');
+                    }
+                    else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        function del(obj, device_id) {
+            var txt = "是否确认删除？";
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var option = {
+                title: "删除记录",
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        "type": "post",
+                        "url": "/asset/hard/delete/",
+                        "dataType": "json",
+                        "data": {
+                            "device_id": device_id,
+                        },
+                        "success": function (resp) {
+                            if (resp["code"] == 0) {
+                                initTable();
+                                window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                            }
+                            else {
+                                window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                            }
+                        },
+                        "error": function (response) {
+                            window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                        }
+                    });
+                },
+                onCancel: function () {
+                    btnObj.attr('disabled', false);
+                },
+                onClose: function () {
+                    btnObj.attr('disabled', false);
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+        function editSSHConfig() {
+            $.ajax({
+                "type": "post",
+                "url": "/asset/hard/editsshproxy/",
+                "dataType": "json",
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        var data = resp["data"];
+                        console.log((data));
+                        var editor = ace.edit("modSSHConfig");
+                        editor.setValue(data.config_content);
+                        editor.setOptions({
+                            enableBasicAutocompletion: true,
+                            enableSnippets: true,
+                            enableLiveAutocompletion: false
+                        });
+                        var validationResult = "#VRModSSHContent";
+                        $(validationResult).hide();
+                        $("#modSSHConfigDialog").modal('show');
+                    } else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+
+        function saveSSHConfig() {
+            var editor = ace.edit("modSSHConfig");
+            var content = editor.getValue();
+            $.ajax({
+                "type": "post",
+                "url": "/asset/hard/savesshproxy/",
+                "dataType": "json",
+                "data": {
+                    "config_content": content,
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        initTable();
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                        $("#modSSHConfigDialog").modal('hide');
+                    } else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        function operationTap(op,id) {
+            var tr=$(op).parents('tr');
+            var tbody=$(op).parents('tbody');
+            if(tr.find('.operationModel').length!=0){
+                tr.find('.operationModel').remove();
+            }else{
+                var html='';
+                tbody.find('.operationModel').remove();
+                 html='<div class="operationModel"><div class="title">操作栏</div><button  type="button" class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="编辑设备" onclick="modfiyView( \'' + id + '\')"><i class="glyphicon glyphicon-edit"></i></button>&nbsp;'+
+                     '<button  type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="left" title="删除设备" onclick="del(this,\'' + id + '\')" ><i class="glyphicon glyphicon-trash"></i></button></div>';
+                tr.append(html)
+            }
+
+
+        }
+        function json2csv(JSONData, ReportTitle, ShowLabel) {
+            var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+            var CSV = '';
+            if (ShowLabel) {
+                var row = "";
+                for (var index in arrData[0]) {
+                    row += index + ',';
+                }
+                row = row.slice(0, -1);
+                CSV += row + '\r\n';
+            }
+            for (var i = 0; i < arrData.length; i++) {
+                var row = "";
+                for (var index in arrData[i]) {
+                    row += '"' + arrData[i][index] + '",';
+                }
+
+                row.slice(0, row.length - 1);
+
+                //add a line break after each row
+                CSV += row + '\r\n';
+            }
+
+            if (CSV == '') {
+                alert("无效的数据");
+                return;
+            }
+            var fileName = "下载文件名";
+            fileName = ReportTitle.replace(/ /g, "_");
+            CSV="\ufeff"+CSV;
+            var uri = window.URL.createObjectURL(new Blob([CSV],{type:'text/plain,charset=utf-8'}));
+            var link = document.createElement("a");
+            link.href = uri;
+            link.download = fileName + ".csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+        function dataExportTap(){
+            //数据导出前端表格中的数据
+             var csvTh={
+                device_id:'设备ID',
+                platform_name:'所属平台',
+                ansible_ssh_host:'服务器IP',
+                os_type:'服务器操作系统',
+                os_version:'服务器操作系统版本',
+             };
+            var dataList=[];
+            for(var index=0;index<exportTable.length;index++){
+                var obj={
+                    device_id:exportTable[index].aData.device_id,
+                    platform_name:exportTable[index].aData.platform_name,
+                    ansible_ssh_host:exportTable[index].aData.ansible_ssh_host,
+                    os_type:exportTable[index].aData.os_type,
+                    os_version:exportTable[index].aData.os_version
+                };
+                dataList.push(obj)
+            }
+            dataList.unshift(csvTh);
+            json2csv(dataList,'主机明细')
+        }
+        function dataImportTap() {
+            $("#hart_list_importFile").trigger('click');
+        }
+        //数据导入
+        function dataImportChangeTap(op) {
+           var formFile = new FormData();
+           formFile.append("file",op.files[0]);
+           $.ajax({
+               url: "",
+               data:formFile,
+               type: "Post",
+               dataType: "json",
+               cache: false,
+               processData: false,
+               contentType: false,
+               "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        initTable();
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                    } else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+           })
+        }
+    </script>
+    <script src="{% static 'js/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var langTools = ace.require("ace/ext/language_tools");
+        var editorForExisted = ace.edit("modSSHConfig"); // for amending existed playbook
+        editorForExisted.setTheme("ace/theme/twilight");
+        editorForExisted.session.setMode("ace/mode/text");
+    </script>
+{% endblock %}

@@ -1,0 +1,1055 @@
+{% extends 'index.html' %}
+{% block page-content %}
+
+    {% load static %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+
+    <!-- Section CSS -->
+    <!-- jQuery UI (REQUIRED) -->
+    <link rel="stylesheet" href="{% static 'elfinder/jquery/jquery-ui-1.12.0.css' %}" type="text/css">
+
+    <!-- elfinder css -->
+    <link rel="stylesheet" href="{% static 'elfinder/css/commands.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/common.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/contextmenu.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/cwd.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/dialog.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/fonts.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/navbar.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/places.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/quicklook.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/statusbar.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/theme.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/toast.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'elfinder/css/toolbar.css' %}" type="text/css">
+
+    <!-- Section JavaScript -->
+    <!-- jQuery and jQuery UI (REQUIRED) -->
+    <!--<script src="{% static 'elfinder/jquery/jquery-1.12.4.js' %}" type="text/javascript" charset="utf-8"></script>-->
+    <script src="{% static 'elfinder/jquery/jquery-ui-1.12.0.js' %}" type="text/javascript" charset="utf-8"></script>
+
+    <!-- elfinder core -->
+    <script src="{% static 'elfinder/js/elFinder.js' %}"></script>
+    <script src="{% static 'elfinder/js/elFinder.version.js' %}"></script>
+    <script src="{% static 'elfinder/js/jquery.elfinder.js' %}"></script>
+    <script src="{% static 'elfinder/js/elFinder.mimetypes.js' %}"></script>
+    <script src="{% static 'elfinder/js/elFinder.options.js' %}"></script>
+    <script src="{% static 'elfinder/js/elFinder.options.netmount.js' %}"></script>
+    <script src="{% static 'elfinder/js/elFinder.history.js' %}"></script>
+    <script src="{% static 'elfinder/js/elFinder.command.js' %}"></script>
+    <script src="{% static 'elfinder/js/elFinder.resources.js' %}"></script>
+
+    <!-- elfinder dialog -->
+    <script src="{% static 'elfinder/js/jquery.dialogelfinder.js' %}"></script>
+
+    <!-- elfinder default lang -->
+    <!--<script src="{% static 'elfinder/js/i18n/elfinder.en.js' %}"></script>-->
+    <script src="{% static 'elfinder/js/i18n/elfinder.zh_CN.js' %}"></script>
+
+
+    <!-- elfinder ui -->
+    <script src="{% static 'elfinder/js/ui/button.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/contextmenu.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/cwd.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/dialog.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/fullscreenbutton.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/navbar.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/navdock.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/overlay.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/panel.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/path.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/places.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/searchbutton.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/sortbutton.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/stat.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/toast.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/toolbar.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/tree.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/uploadButton.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/viewbutton.js' %}"></script>
+    <script src="{% static 'elfinder/js/ui/workzone.js' %}"></script>
+
+
+    <!-- elfinder commands -->
+    <script src="{% static 'elfinder/js/commands/archive.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/back.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/copy.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/cut.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/chmod.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/colwidth.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/download.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/duplicate.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/edit.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/empty.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/extract.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/forward.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/fullscreen.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/getfile.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/help.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/hidden.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/home.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/info.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/mkdir.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/mkfile.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/netmount.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/open.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/opendir.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/paste.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/places.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/quicklook.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/quicklook.plugins.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/reload.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/rename.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/resize.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/restore.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/rm.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/search.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/selectall.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/selectinvert.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/selectnone.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/sort.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/undo.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/up.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/upload.js' %}"></script>
+    <script src="{% static 'elfinder/js/commands/view.js' %}"></script>
+
+
+    <!-- Extra contents editors (OPTIONAL) -->
+    <script src="{% static 'elfinder/js/extras/editors.default.js' %}"></script>
+    <!--page-wrapper common Function-->
+    <script src="{% static 'js/config.js' %}"></script>
+    <div id="page-wrapper" class="playbook_list">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa   fa-dashboard"></i>&nbsp;<span>原子任务管理 </span> </h1>
+            </div>
+        </div>
+{#        <div class="well">#}
+{#            <h4>设备资产更新说明</h4>#}
+{#            <ol>#}
+{#                <li><p>点击&nbsp;<i class="glyphicon glyphicon-edit"></i>&nbsp;编辑信息</p></li>#}
+{#                <li><p>点击&nbsp;<i class="glyphicon glyphicon-trash"></i>&nbsp;删除信息</p></li>#}
+{#                <li><p>点击&nbsp;<i class="glyphicon glyphicon-wrench"></i>&nbsp;编辑Playbook</p></li>#}
+{#                <li><p>点击&nbsp;<i class="glyphicon glyphicon-folder-open"></i>&nbsp;编辑Roles</p></li>#}
+{#            </ol>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-lg-12">#}
+{#                <div class="panel panel-default">#}
+{#                    <div class="panel-body">#}
+{#                        <form class="form-inline">#}
+{#                            <div class="row">#}
+{#                                <div class="form-group col-lg-3-5 col-md-6 col-sm-12">#}
+{#                                    <label class="control-label">原子任务类型</label>#}
+{#                                    <select class="selectpicker" data-live-search="true"#}
+{#                                            data-live-search-placeholder="请输入检索内容" data-none-selected-text="请选择平台"#}
+{#                                            name="playbook_type" id="playbook_type">#}
+{#                                        <option name="playbook_type" value="" selected>全部类型</option>#}
+{#                                        <option name="playbook_type" value="1">资产信息</option>#}
+{#                                        <option name="playbook_type" value="2">基线加固</option>#}
+{#                                        <option name="playbook_type" value="3">日志审计</option>#}
+{#                                        <option name="playbook_type" value="4">漏洞整改与隐患排查</option>#}
+{#                                        <option name="playbook_type" value="5">密码/端口检测</option>#}
+{#                                        <option name="playbook_type" value="6">安全访问控制</option>#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                                <div class="form-group col-lg-3-5 col-md-6 col-sm-12">#}
+{#                                    <label class="control-label ">原子任务名称</label>#}
+{#                                    <input class="form-control" id="playbook_name" name="playbook_name" type="text">#}
+{#                                </div>#}
+{#                                <div class="form-group col-lg-3-5 col-md-6 col-sm-12">#}
+{#                                    <label class="control-label ">原子任务文件名</label>#}
+{#                                    <input class="form-control" id="playbook_file_name" name="playbook_file_name" type="text">#}
+{#                                </div>#}
+{#                                <div class=" form-group-sm col-lg-1-5 pull-right col-md-12 col-sm-12">#}
+{#                                    <label class="control-label hidden-label">查询</label>#}
+{#                                    <input type="button" id="query" class="btn btn-primary" value="查询">#}
+{#                                </div>#}
+{#                            </div>#}
+{##}
+{#                        </form>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-database"></i>&nbsp;原子任务管理
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <form class="form-inline queryForm">
+                                <label class="control-label">原子任务类型</label>
+                                <select class="selectpicker auto-select select-sm" data-live-search="true"
+                                        data-live-search-placeholder="请输入检索内容" data-none-selected-text="请选择平台"
+                                        name="playbook_type" id="playbook_type">
+                                    <option name="playbook_type" value="" selected>全部类型</option>
+                                    <option name="playbook_type" value="1">资产信息</option>
+                                    <option name="playbook_type" value="2">基线加固</option>
+                                    <option name="playbook_type" value="3">日志审计</option>
+                                    <option name="playbook_type" value="4">漏洞整改与隐患排查</option>
+                                    <option name="playbook_type" value="5">密码/端口检测</option>
+                                    <option name="playbook_type" value="6">安全访问控制</option>
+                                </select>
+                                <label class="control-label ">原子任务名称</label>
+                                <input class="form-control auto-input input-sm" placeholder="原子任务名称" id="playbook_name" name="playbook_name" type="text">
+                                <label class="control-label ">原子任务文件名</label>
+                                <input class="form-control auto-input input-sm" placeholder="原子任务文件名" id="playbook_file_name" name="playbook_file_name" type="text">
+                                <input type="button" id="query" class="btn btn-primary btn-sm" value="查询">
+                                <botton class="btn btn-warning btn-sm" onclick="addView()"><i class="fa fa-plus-circle "></i>&nbsp;新增</botton>
+                        </form>
+                        <table id="dataTableList" class="table table-striped table-bordered table-advance table-hove displayr nowrap">
+                            <thead>
+                            <tr>
+                                <th class="text-center">原子任务名称</th>
+                                <th class="text-center">描述</th>
+                                <th class="text-center">原子任务文件路径</th>
+                                <th class="text-center">原子任务文件名</th>
+                                <th class="text-center">原子任务类型</th>
+{#                                <th class="text-center">操作</th>#}
+                            </tr>
+                            </thead>
+                        </table>
+                        <!-- /.table-responsive -->
+{#                        <div class="well">#}
+{#                            <h4>设备资产更新说明</h4>#}
+{#                            <ol>#}
+{#                                <li><p>点击<i class="glyphicon glyphicon-edit"></i>编辑信息</p></li>#}
+{#                                <li><p>点击<i class="glyphicon glyphicon-trash"></i>删除信息</p></li>#}
+{#                                <li><p>点击<i class="glyphicon glyphicon-wrench"></i>编辑Playbook</p></li>#}
+{#                                <li><p>点击<i class="glyphicon glyphicon-folder-open"></i>编辑Roles</p></li>#}
+{#                            </ol>#}
+{#                           <!-- <botton class="btn btn-default btn-lg btn-block" onclick="addView()"><i#}
+{#                                    class="fa fa-plus-circle "></i>新增#}
+{#                            </botton>--->#}
+{#                        </div>#}
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myZoneModalLabel">
+                        新增
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">原子任务名称</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="playbook_name_add" name="playbook_name_add">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">描述</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="playbook_desc_add" name="playbook_desc_add">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">原子任务文件路径</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="playbook_path_add" name="playbook_path_add">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">原子任务文件名</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="playbook_file_name_add"
+                                       name="playbook_file_name_add">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">原子任务类型</label>
+                            <div class="col-sm-6">
+                                <select class="selectpicker" data-live-search="true"
+                                        data-live-search-placeholder="请输入检索内容" data-none-selected-text="请选择平台"
+                                        name="playbook_type_add" id="playbook_type_add">
+                                    <option name="playbook_type_add" value="1">资产信息</option>
+                                    <option name="playbook_type_add" value="2">基线加固</option>
+                                    <option name="playbook_type_add" value="3">日志审计</option>
+                                    <option name="playbook_type_add" value="4">漏洞整改与隐患排查</option>
+                                    <option name="playbook_type_add" value="5">密码/端口检测</option>
+                                    <option name="playbook_type_add" value="6">安全访问控制</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="newPlaybook()">新建YAML文件</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="add()">
+                        提交
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="modal fade" id="modfiyModal" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myZoneModalLabel">
+                        修改
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">原子任务名称</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="playbook_name_mod" name="playbook_name_mod">
+                                <input type="hidden" class="form-control" id="id_mod" name="id_mod">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">描述</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="playbook_desc_mod" name="playbook_desc_mod">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">原子任务文件路径</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="playbook_path_mod" name="playbook_path_mod">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">原子任务文件名</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="playbook_file_name_mod"
+                                       name="playbook_file_name_mod">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">原子任务类型</label>
+                            <div class="col-sm-6">
+                                <select class="selectpicker" data-live-search="true"
+                                        data-live-search-placeholder="请输入检索内容" data-none-selected-text="请选择平台"
+                                        name="playbook_type_add" id="playbook_type_mod">
+                                    <option name="playbook_type_add" value="1">资产信息</option>
+                                    <option name="playbook_type_add" value="2">基线加固</option>
+                                    <option name="playbook_type_add" value="3">日志审计</option>
+                                    <option name="playbook_type_add" value="4">漏洞整改与隐患排查</option>
+                                    <option name="playbook_type_add" value="5">密码/端口检测</option>
+                                    <option name="playbook_type_add" value="6">安全访问控制</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="modfiy()">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--operation row model-->
+    <!--edit an existed playbook-->
+    <div class="modal fade" id="amendPlaybook" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title" id="myZoneModalLabel">修改Playbook</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <input type="hidden" class="form-control" id="amendingPlaybookId" name="amendingPlaybookId">
+                    </div>
+                    <div id="amendingPlaybookContent" name="amendingPlaybookContent" style="height: 500px;"></div>
+                   <button type="button" class="btn btn-primary" onclick="validateYaml('amendingPlaybookContent')">验证</button>
+                </div>
+                VRO stands for: validation result of
+                <pre id="VROamendingPlaybookContent" class="hide VROamendingPlaybookContent"></pre>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"
+                            onclick="validateYamlBackend('amendingPlaybookContent')">Playbook验证
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            onclick="validateYaml('amendingPlaybookContent')">Yaml语法验证
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="updatePlaybook()">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--new a playbook-->
+    <div class="modal fade" id="newPlaybook" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title" id="myZoneModalLabel">新建YAML文件</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="newingPlaybookContent" name="newingPlaybookContent" style="height: 500px;"></div>
+                </div>
+                <pre id="VROnewingPlaybookContent" class="hide VROnewingPlaybookContent"></pre>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"
+                            onclick="validateYamlBackend('newingPlaybookContent')">Playbook验证
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            onclick="validateYaml('newingPlaybookContent')">Yaml语法验证
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--edit Role-->
+    <div class="modal fade" id="editRole" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body">
+                    <div id="elfinder_container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+             $(document).ready(function () {
+                 var autoinput = $("input.auto-input");
+                 autoinput.attr('size', 4);
+                 autoinput.keyup(function () {
+                     $(this).attr('size', $(this).val().length > 4 ? $(this).val().length : 4);
+                 });
+                 autoinput.keydown(function () {
+                     $(this).keyup()
+                 });
+             });
+    </script>
+    <script>
+        var oTable = null;
+        $(document).ready(function () {
+
+
+            //媒体检查表格自适应
+            initTable();
+            $("#query").click(function () {
+                initTable();
+            });
+            /*$(window).resize(function () {
+                var lens=$(".tableRowLen").width();
+               initTable(lens);
+            })*/
+        });
+        var initTable = function () {
+            if (oTable != null) {
+                oTable.fnClearTable(0);
+                oTable.fnDraw(); //重新加载数据
+                oTable.fnDestroy();
+            }
+            oTable = $('#dataTableList').dataTable({
+                "fnPreDrawCallback": function () {
+                    $('.dataTable_header').remove();
+                },
+                "aLengthMenu": [10, 20, 50, 100], //更改显示记录数选项
+                "bProcessing": true,
+                "bJQueryUI": false, //是否使用 jQury的UI theme
+                "bFilter": false,// 搜索栏
+                "bLengthChange": true, //关闭每页显示多少条数据
+                "bSort": false,
+                "bStateSave": false,//是否打开客户端状态记录功能,此功能在ajax刷新纪录的时候不会将个性化设定回复为初始化状态
+                "bServerSide": true,
+                "iDisplayStart": 0,
+                "iDisplayLength": 10,
+                "bScrollCollapse": true, //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+                "bAutoWidth":false, //是否自适应宽度
+                "aoColumns": [//设定各列宽度
+                    {"mData": "playbook_name", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "playbook_desc", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "playbook_path", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "playbook_file_name", "sDefaultContent":'', "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "playbook_type", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"}
+                    /* {"mData": "playbook_opr", "sDefaultContent":'', "bSearchable": false, "sClass": "text-center"}*/
+                ],
+                "oLanguage": {
+                    "sLengthMenu": "每页显示 _MENU_条",
+                    "sZeroRecords": "没有找到符合条件的数据",
+                    "sProcessing": " 数据加载中， 请稍候......",
+                    "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                    "sInfoEmpty": "没有记录",
+                    "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                    "sSearch": "",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "前一页",
+                        "sNext": "后一页",
+                        "sLast": "尾页"
+                    }
+                },
+                "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                    var playbook_type = aData.playbook_type;
+                    var id = aData.id;
+                    var fileName=aData.playbook_file_name;//文件名
+                    var desc=aData.playbook_desc;//描述
+                    var name=aData.playbook_name;//名称
+                    var type=aData.playbook_type;//类型
+                    var path=aData.playbook_path;//更新时间
+                    if (playbook_type == 1) {
+                        playbook_type = "资产信息";
+                    } else if (playbook_type == 2) {
+                        playbook_type = "基线加固";
+                    } else if (playbook_type == 3) {
+                        playbook_type = "日志审计";
+                    } else if (playbook_type == 4) {
+                        playbook_type = "漏洞整改与隐患排查";
+                    } else if (playbook_type == 5) {
+                        playbook_type = "密码/端口检测";
+                    } else if (playbook_type == 6) {
+                        playbook_type = "安全访问控制";
+                    }
+                  console.log(aData)
+                    /*var html = '<button  type="button" class="btn btn-warning btn-xs"   ' +
+                        'onclick="modfiyView(\'' + id + '\')"><abbr title="编辑设备"> <i class="glyphicon glyphicon-edit"></i></abbr></button>&nbsp;' +
+                        '<button  type="button" class="btn btn-danger btn-xs"' +
+                        'onclick="del(this,\'' + id + '\')" ><abbr title="删除设备"><i class="glyphicon glyphicon-trash"></i></abbr></button>&nbsp;' +
+                        '<button  type="button" class="btn   btn-info btn-xs"' +
+                        'onclick="editPlaybook(\'' + id + '\')" ><abbr title="编辑Playbook"><i class="glyphicon glyphicon-wrench"></i></abbr></button>&nbsp;' +
+                        '<button  type="button" class="btn btn-success btn-xs"' +
+                        'onclick="editRoles(\'' + id + '\')" ><abbr title="编辑Roles"><i class="glyphicon glyphicon-folder-open"></i></abbr></button>';*/
+                    $('td:eq(0)', nRow).html(fnRowToggleLen(name,iDisplayIndex,id,0));
+                    $('td:eq(1)', nRow).html(fnRowToggleLen(desc,iDisplayIndex,id));
+                    $('td:eq(2)', nRow).html(fnRowToggleLen(path,iDisplayIndex,id));
+                    $('td:eq(3)', nRow).html(fnRowToggleLen(fileName,iDisplayIndex,id));
+                    $('td:eq(4)', nRow).html(fnRowToggleLen(playbook_type,iDisplayIndex,id));
+                   // $('td:eq(5)', nRow).html(html);//设置该列的值
+                    return nRow;
+                },
+                "fnInitComplete": function (oSettings, json) {
+                    $("[data-toggle='tooltip']").tooltip();
+                },
+                "sAjaxSource": "/playbook/list",
+                "fnServerData": retrieveData,
+
+            });
+        }
+
+        function retrieveData(sSource, aoData, fnCallback) {
+            var iDisplayStart = 0;
+            var iDisplayLength = 10;
+            var sEcho;
+            for (var i = 0; i < aoData.length; i++) {
+                if (aoData[i].name == "iDisplayStart") {
+                    /*开始页数*/
+                    iDisplayStart = aoData[i].value;
+                } else if (aoData[i].name == "iDisplayLength") {
+                    /*记录条数*/
+                    iDisplayLength = aoData[i].value;
+                }
+                else if (aoData[i].name == "sEcho") {
+                    /*记录条数*/
+                    sEcho = aoData[i].value;
+                }
+            }
+            var page = (iDisplayStart / iDisplayLength) + 1;
+            $.ajax({
+                "type": "post",
+                "url": sSource,
+                "dataType": "json",
+                "data": {
+                    "playbook_type": $("#playbook_type").val(),
+                    "playbook_name": $("#playbook_name").val(),
+                    "playbook_file_name": $("#playbook_file_name").val(),
+                    "mode": "select",
+                    "aoData": aoData,
+                    "iDisplayStart": iDisplayStart,
+                    "iDisplayLength": iDisplayLength,
+                    "page": page,
+                    "sEcho": sEcho
+                },
+                "success": function (resp) {
+                    fnCallback(resp);
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("数据格式不合法~", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+
+        function addView() {
+            $("#addModal").modal('show');
+        }
+
+        // invoked when use click the submit button on <addmodal>
+        function add() {
+            var editorForNewingPlaybook = ace.edit("newingPlaybookContent");
+            if ($("#playbook_name_add").val() == '') {
+                window.wxc.xcConfirm("请输入原子任务名称", window.wxc.xcConfirm.typeEnum.error);
+                return false;
+            }
+            else if ($("#playbook_path_add").val() == '') {
+                window.wxc.xcConfirm("请输入原子任务文件路径", window.wxc.xcConfirm.typeEnum.error);
+                return false;
+            }
+            else if ($("#playbook_file_name_add").val() == '') {
+                window.wxc.xcConfirm("请输入原子任务文件名", window.wxc.xcConfirm.typeEnum.error);
+                return false;
+            }
+
+            $.ajax({
+                "type": "post",
+                "url": "/playbook/list",
+                "dataType": "json",
+                "data": {
+                    "playbook_name": $("#playbook_name_add").val(),
+                    "playbook_desc": $("#playbook_desc_add").val(),
+                    "playbook_path": $("#playbook_path_add").val(),
+                    "playbook_file_name": $("#playbook_file_name_add").val(),
+                    "playbook_type": $("#playbook_type_add").val(),
+                    "playbook_content": editorForNewingPlaybook.getValue(),
+                    "mode": "add"
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        initTable();
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                        editorForNewingPlaybook.setValue("");
+                        $("#addModal").modal('hide');
+                    } else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        function modfiyView(id) {
+            $.ajax({
+                "type": "post",
+                "url": "/playbook/list",
+                "dataType": "json",
+                "data": {
+                    "id": id,
+                    "mode": "byId"
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        var data = resp["data"];
+                        $("#id_mod").val(data.id);
+                        $("#playbook_name_mod").val(data.playbook_name);
+                        $("#playbook_desc_mod").val(data.playbook_desc);
+                        $("#playbook_path_mod").val(data.playbook_path);
+                        $("#playbook_file_name_mod").val(data.playbook_file_name);
+                        $("#playbook_type_mod").selectpicker('val', data.playbook_type);
+                         $("#modfiyModal").modal('show');
+                    } else {
+                        $("#operationModel").modal('hide');
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    $("#operationModel").modal('hide');
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        function modfiy() {
+            $.ajax({
+                "type": "post",
+                "url": "/playbook/list",
+                "dataType": "json",
+                "data": {
+                    "id": $("#id_mod").val(),
+                    "playbook_name": $("#playbook_name_mod").val(),
+                    "playbook_desc": $("#playbook_desc_mod").val(),
+                    "playbook_path": $("#playbook_path_mod").val(),
+                    "playbook_file_name": $("#playbook_file_name_mod").val(),
+                    "playbook_type": $("#playbook_type_mod").val(),
+                    "mode": "update"
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        initTable();
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                        $("#modfiyModal").modal('hide');
+                    }
+                    else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        function del(obj, id) {
+            var txt = "是否确认删除？";
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var option = {
+                title: "删除记录",
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        "type": "post",
+                        "url": "/playbook/list",
+                        "dataType": "json",
+                        "data": {
+                            "id": id,
+                            "mode": "delete"
+                        },
+                        "success": function (resp) {
+
+                            if (resp["code"] == 0) {
+                                initTable();
+                                window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                            }
+                            else {
+                                $("#operationModel").modal('hide');
+                                window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                            }
+                        },
+                        "error": function (response) {
+                            $("#operationModel").modal('hide');
+                            window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                        }
+                    });
+                },
+                onCancel: function () {
+                    btnObj.attr('disabled', false);
+                },
+                onClose: function () {
+                    btnObj.attr('disabled', false);
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+        // editPlaybook
+        function editPlaybook(id) {
+            $.ajax({
+                "type": "post",
+                "url": "/playbook/list",
+                "dataType": "json",
+                "data": {
+                    "id": id,
+                    "mode": "editPlaybook"
+                },
+                "success": function (resp) {
+
+
+                    if (resp["code"] == 0) {
+                        var data = resp["data"];
+                        var editor = ace.edit("amendingPlaybookContent");
+                        editor.setValue(data.playbook_content);
+                        editor.setOptions({
+                            enableBasicAutocompletion: true,
+                            enableSnippets: true,
+                            enableLiveAutocompletion: false
+                        });
+                        var validationResult = "#VROamendingPlaybookContent";
+                        $(validationResult).hide();
+                        $("#amendingPlaybookId").val(data.playbook_id);
+                        //$("#amendPlaybook").modal('show');
+                    } else {
+                        //操作失败，弹出错误提示
+                        $("#operationModel").modal('hide');
+                        console.log('Faild to edit playbook:', id, ' while parsing server response');
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    $("#operationModel").modal('hide');
+                    console.log('Faild to edit playbook due to failed ajax: ', id);
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        function updatePlaybook() {
+            var editor = ace.edit("amendingPlaybookContent");
+            var content = editor.getValue();
+            console.log('posting new content to server', content)
+            $.ajax({
+                "type": "post",
+                "url": "/playbook/list",
+                "dataType": "json",
+                "data": {
+                    "id": $("#amendingPlaybookId").val(),
+                    "playbook_content": content,
+                    "mode": "updatePlaybook"
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        initTable();
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                        //$("#amendPlaybook").modal('hide');
+                    } else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        // yaml validator
+        function validateYaml(editor_) {
+            console.log('trying to validate', editor_);
+            var editor = ace.edit(editor_);
+            var data = editor.getValue();
+            if (data != null && data.trim().length != 0) {
+                try {
+                    data = YAML.parse(data);
+                    validationResult = "#VRO" + editor_;
+
+                    $(validationResult).show();
+                    $(validationResult).removeClass();
+                    $(validationResult).addClass("success");
+                    $("#editor").css({
+                        'border': '1px solid #C6D880'
+                    });
+                    $(validationResult).text("Valid YAML");
+                } catch (e) {
+
+                    var errorData = "";
+
+                    errorData = errorData + "Error : " + e['message'];
+                    errorData = errorData + "\n";
+                    errorData = errorData + "Line : " + e['parsedLine'] + "  "
+                        + e['snippet'];
+
+                    $(validationResult).show();
+                    $("#editor").css({
+                        'border': '1px solid #FBC2C4'
+                    });
+                    $(validationResult).removeClass();
+                    $(validationResult).addClass("error");
+                    $(validationResult).text(errorData);
+                }
+            } else {
+                $("#editor").css({
+                    'border': '1px solid #BCBDBA'
+                });
+                $(result_place).hide();
+            }
+        }
+        function validateYamlBackend(editor_) {
+            console.log('trying to validate', editor_);
+            var editor = ace.edit(editor_);
+            var playbook_content = editor.getValue();
+            $.ajax({
+                "type": "post",
+                "url": "/playbook/list",
+                "dataType": "json",
+                "data": {
+                    "playbook_content": playbook_content,
+                    "mode": "validatePlaybook"
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        validationResult = "#VRO" + editor_;
+                        $(validationResult).show();
+                        $(validationResult).removeClass();
+                        $(validationResult).addClass("success");
+                        $("#editor").css({
+                            'border': '1px solid #C6D880'
+                        });
+                        $(validationResult).text(resp.data.msg);
+                    } else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+        function newPlaybook() {
+            var editor = ace.edit("newingPlaybookContent");
+            editor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: false
+            });
+            var validationResult = "#VROnewingPlaybookContent";
+            $(validationResult).hide();
+            $("#newPlaybook").modal('show');
+        }
+        function newRole() {
+            var editorForNewing = ace.edit("newingPlaybookContent");
+            console.log(editorForNewing.getValue());
+        }
+        //更改之前
+        function showRole(show_file) {
+            console.log("Trying to show " + show_file);
+            //https://github.com/Studio-42/elFinder/issues/1709
+            $('#elfinder_container').elfinder('destroy');  // destroy the view
+            $('#elfinder_container').elfinder(
+                // 1st Arg - options
+                {
+                    // Disable CSS auto loading
+                    cssAutoLoad: false,
+
+                    // Base URL to css/*, js/*
+                    baseUrl: './',
+
+                    // Connector URL
+                    url: '/roles/roles/default/default/' + show_file,
+
+
+                    // Callback when a file is double-clicked
+                    getFileCallback: function (file) {
+                        // ...
+                    },
+                },
+
+                // 2nd Arg - before boot up function
+                function (fm, extraObj) {
+                    // `init` event callback function
+                    fm.bind('init', function () {
+                        // Optional for Japanese decoder "extras/encoding-japanese.min"
+                        delete fm.options.rawStringDecoder;
+                        if (fm.lang === 'ja') {
+                            fm.loadScript(
+                                [fm.baseUrl + 'js/extras/encoding-japanese.min.js'],
+                                function () {
+                                    if (window.Encoding && Encoding.convert) {
+                                        fm.options.rawStringDecoder = function (s) {
+                                            return Encoding.convert(s, {to: 'UNICODE', type: 'string'});
+                                        };
+                                    }
+                                },
+                                {loadType: 'tag'}
+                            );
+                        }
+                    });
+
+                    // Optional for set document.title dynamically.
+                    var title = document.title;
+                    fm.bind('open', function () {
+                        var path = '',
+                            cwd = fm.cwd();
+                        if (cwd) {
+                            path = fm.path(cwd.hash) || null;
+                        }
+                        document.title = path ? path + ':' + title : title;
+                    }).bind('destroy', function () {
+                        document.title = title;
+                    });
+                }
+            );
+        };
+        //更改之前
+        function editRoles(id) {
+            $.ajax({
+                "type": "post",
+                "url": "/playbook/list",
+                "dataType": "json",
+                "data": {
+                    "id": id,
+                    "mode": "editRoles"
+                },
+                "success": function (resp) {
+
+
+                    if (resp["code"] == 0) {
+                        var show_file = resp["data"];
+                        showRole(show_file + "/");
+                        $("#editRole").modal('show');
+                    } else {
+                        if (resp["code"] == -2) {
+                            // There is missing role in this playbook;
+                            var show_file = resp["data"];
+                            window.wxc.xcConfirm(resp["error"], window.wxc.xcConfirm.typeEnum.error);
+                            showRole(show_file + "/");
+                            $("#editRole").modal('show');
+                        } else {
+                            $("#operationModel").modal('hide');
+                            console.log('Faild to edit Roles:');
+                            window.wxc.xcConfirm("Playbook文件未包含Roles", window.wxc.xcConfirm.typeEnum.error);
+                        }
+                    }
+                },
+                "error": function (response) {
+                    $("#operationModel").modal('hide');
+                    console.log('Faild to edit playbook due to failed ajax:');
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        };
+
+        function operationRowClick(op,id,iDisplayIndex){
+            var tr=$(op).parents('tr');
+            var tbody=$(op).parents('tbody');
+            if(tr.find('.operationModel').length!=0){
+               tr.find('.operationModel').remove();
+            }else{
+                var html='';
+                tbody.find('.operationModel').remove();
+                 html = '<div class="operationModel"><div class="title">操作栏</div><button  type="button" class="btn btn-warning btn-xs"   ' +
+                        'onclick="modfiyView(\'' + id + '\')"><abbr title="编辑设备"> <i class="glyphicon glyphicon-edit"></i></abbr></button>&nbsp;' +
+                        '<button  type="button" class="btn btn-danger btn-xs"' +
+                        'onclick="del(this,\'' + id + '\')" ><abbr title="删除设备"><i class="glyphicon glyphicon-trash"></i></abbr></button>&nbsp;' +
+                        '<button  type="button" class="btn   btn-info btn-xs"' +
+                        'onclick="editPlaybook(\'' + id + '\')" ><abbr title="编辑Playbook"><i class="glyphicon glyphicon-wrench"></i></abbr></button>&nbsp;' +
+                        '<button  type="button" class="btn btn-success btn-xs"' +
+                        'onclick="editRoles(\'' + id + '\')" ><abbr title="编辑Roles"><i class="glyphicon glyphicon-folder-open"></i></abbr></button></div>';
+                tr.append(html)
+            }
+
+        };
+        function fnRowToggleLen(data,iDisplayIndex,id,index) {
+            var html='';
+            if(index!=undefined){
+                html='<div onclick="operationRowClick(this,\''+id+'\',\''+iDisplayIndex+'\')"><a data-toggle="tooltip" title="'+data+'">'+data+'</a></div>';
+
+            }else{
+                html='<div>'+data+'</div>';
+               // html='<div data-toggle="tooltip" data-placement="bottom" title=\'' + data + '\'>'+data+'</div>';
+            }
+            return html;
+        }
+        function textEllipsis() {
+            
+        }
+    </script>
+
+    <script src="{% static 'js/yaml.js' %}"></script>
+
+    <script src="{% static 'js/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var langTools = ace.require("ace/ext/language_tools");
+        var editorForExisted = ace.edit("amendingPlaybookContent"); // for amending existed playbook
+        var editorForNewing = ace.edit("newingPlaybookContent");
+        editorForExisted.setTheme("ace/theme/twilight");
+        editorForExisted.session.setMode("ace/mode/yaml");
+        editorForNewing.setTheme("ace/theme/twilight");
+        editorForNewing.session.setMode("ace/mode/yaml");
+    </script>'
+
+{% endblock %}

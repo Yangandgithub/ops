@@ -1,0 +1,448 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block page-content %}
+    <style>
+        .btn-group.bootstrap-select button,
+        .form-control{
+            background: rgba(0,0,0,0.3);
+            color:#fff;
+        }
+        .bootstrap-select.btn-group .dropdown-menu{
+            width: auto;
+        }
+        .form-group label,.help-block{
+            color:#fff;
+            font-weight: normal;
+        }
+    </style>
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa  fa-wrench"></i>&nbsp;<span>Ansible 任务配置</span> </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa  fa-plus"></i>&nbsp;添加任务
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <form method="post" enctype="multipart/form-data" onsubmit="return validateSubmit()">  {% csrf_token %}
+                                <div class="col-lg-6">
+                                    <legend><i class="fa  fa-paper-plane"></i>&nbsp;Ansible服务器</legend>
+                                    <div class="form-group">
+                                        <label>任务名称<span style="color:red;"> *</span></label>
+                                        <input class="form-control" id="playbook_name" name="playbook_name"
+                                               placeholder="例如：系统初始化">
+                                        <!--<p class="help-block">例如：系统初始化</p>-->
+                                    </div>
+                                    <!--<div class="form-group">
+                                        <label>Playbook文件</label>
+                                        <input type="file" name="playbook_file" required>
+                                    </div>    -->
+                                    <div class="form-group">
+                                        <label>任务类型&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                      title="选择任务类型"></i></label>
+                                        <br>
+                                        <select class="selectpicker" data-none-selected-text="选择任务类型"
+                                                data-live-search="true"
+                                                data-live-search-placeholder="请输入检索内容" data-width="100%"
+                                                name="playbook_type" id="playbook_type">
+                                            <option name="playbook_type" value="1">资产信息</option>
+                                            <option name="playbook_type" value="2">基线加固</option>
+                                            <option name="playbook_type" value="3">日志审计</option>
+                                            <option name="playbook_type" value="4">漏洞整改与隐患排查</option>
+                                            <option name="playbook_type" value="5">密码/端口检测</option>
+                                            <option name="playbook_type" value="6">安全访问控制</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>任务文件&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                      title="关联ansible服务器那个Playbook文件"></i></label>
+                                        <br>
+                                        <select class="selectpicker" data-none-selected-text="选择Playbook文件"
+                                                data-live-search="true"
+                                                data-live-search-placeholder="请输入检索内容" data-width="100%"
+                                                name="playbook_file" id="playbook_file">
+                                            <!--<select class="form-control" name="playbook_file">
+                                            	{% for playbook in playbookList %}
+                                            		<option name="playbook_file" value="{{playbook}}">{{playbook}}</option>
+                                            	{% endfor %}
+                                            -->
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>查看任务文件&nbsp;
+                                            <i class="fa fa-info-circle" data-toggle="tooltip" title="查看Playbook文件"></i></label>
+                                        <br>
+                                        <button type="button" class="btn btn-default" data-toggle="modal"
+                                                data-target="#myModal"
+                                                onclick="getAnsiblePlayBookFile(this)"  >
+                                            <abbr title="查看Playbook文件">
+                                                <i class="fa fa-eye  "></i>
+                                            </abbr>
+                                        </button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>forks参数<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                         title="设置运行playbook的forks参数"></i></label>
+                                        <input class="form-control" id="forks" name="forks" value="5">
+                                        <!--<p class="help-block">例如：系统初始化</p>-->
+                                    </div>
+                                    <div class="form-group ">
+                                        <label>运行模式&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                      title="设置playbook的运行模式"></i></label>
+                                        <br>
+                                        <select class="selectpicker" data-none-selected-text="请选择运行模式"
+                                                data-width="100%"
+                                                name="run_type" id="run_type">
+                                            <option name="run_type" value="0" selected>Run</option>
+                                            <option name="run_type" value="1">Check</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>剧本外部变量&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                        title="值为json格式"></i></label>
+                                        <textarea class="form-control" rows="3" name="playbook_vars"></textarea>
+                                        <p class="help-block">
+                                            例如：{"host":"all","user":"root"}
+                                        </p>
+                                    </div>
+                                    <!--<button type="reset" class="btn btn-default">撤销</button>-->
+                                </div>
+                            <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-6">
+                                    <legend><i class="fa  fa-paper-plane-o"></i>&nbsp;目标服务器&nbsp;<i class="fa fa-info-circle"
+                                                                                        data-toggle="tooltip"
+                                                                                        title="配置执行此任务的目标服务器"></i></legend>
+                                    <div class="form-group">
+                                        <label>资产平台&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                      title="服务器资产平台组"></i></label>
+                                        <select multiple class="selectpicker" data-actions-box="true"
+                                                data-select-all-text="全选"
+                                                data-deselect-all-text="未选" data-none-selected-text="请选择资产平台"
+                                                data-live-search="true"
+                                                data-live-search-placeholder="请输入检索内容" data-width="100%"
+                                                name="playbook_auth_group" id="playbook_auth_group">
+                                            <option name="group" value="0">全部平台</option>
+                                            {% for ds in groupList %}
+                                                <option name="playbook_auth_group"
+                                                        value="{{ ds.id }}">{{ ds.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label>操作系统类型&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                        title="根据选择操作系统类型过滤服务器主机,默认不过滤"></i></label>
+                                        <br>
+                                        <select class="selectpicker" data-live-search="true"
+                                                data-live-search-placeholder="请输入检索内容"
+                                                data-width="100%"
+                                                data-none-selected-text="请选择操作系统类型"
+                                                name="os_type" id="os_type">
+                                            <option name="os_type" value="" selected>全部类型</option>
+                                            <option name="os_type" value="RedHat">RedHat</option>
+                                            <option name="os_type" value="CentOS">CentOS</option>
+                                            <option name="os_type" value="Solaris">Solaris</option>
+                                            <option name="os_type" value="SLES">SLES</option>
+                                            <option name="os_type" value="AIX">AIX</option>
+                                            <option name="os_type" value="HP-UX">HP-UX</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>中间件类型&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                       title="根据选择中间件类型过滤服务器主机,默认不过滤"></i></label>
+                                        <div>
+                                            <select class="selectpicker" data-live-search="true"
+                                                    data-live-search-placeholder="请输入检索内容"
+                                                    data-width="100%"
+                                                    data-none-selected-text="请选择中间件类型"
+                                                    name="middleware_type" id="middleware_type">
+                                                <option name="middleware_type" value="" selected>全部类型</option>
+                                                <option name="middleware_type" value="tomcat">Tomcat</option>
+                                                <option name="middleware_type" value="apache">Apache</option>
+                                                <option name="middleware_type" value="nginx">nginx</option>
+                                                <option name="middleware_type" value="zabbix">Zabbix</option>
+                                                <option name="middleware_type" value="openssh">OpenSSH</option>
+                                                <option name="middleware_type" value="openssl">OpenSSL</option>
+                                                <option name="middleware_type" value="struts">Struts</option>
+                                                <option name="middleware_type" value="weblogic">weblogic</option>
+                                                <option name="middleware_type" value="jboss">JBoss</option>
+                                                <option name="middleware_type" value="websphere">WebSphere</option>
+                                                <option name="middleware_type" value="sudo">SUDO</option>
+                                                <option name="middleware_type" value="python">Python</option>
+                                                <option name="middleware_type" value="resin">Resin</option>
+                                                <option name="middleware_type" value="axis">Axis</option>
+                                                <option name="middleware_type" value="JDK">JDK</option>
+                                            </select>
+                                        </div>
+
+                                        <label>数据库类型&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                       title="根据选择数据库类型过滤服务器主机,默认不过滤"></i></label>
+                                        <div>
+                                            <select class="selectpicker" data-live-search="true"
+                                                    data-live-search-placeholder="请输入检索内容"
+                                                    data-width="100%"
+                                                    data-none-selected-text="请选择数据库类型"
+                                                    name="db_type" id="db_type">
+                                                <option name="db_type" value="" selected>全部类型</option>
+                                                <option name="db_type" value="oracle">Oracle</option>
+                                                <option name="db_type" value="mysql">MySQL</option>
+                                                <option name="db_type" value="db2">DB2</option>
+                                                <option name="db_type" value="sqlserver">SqlServer</option>
+                                                <option name="db_type" value="sybase">Sybase</option>
+                                                <option name="db_type" value="postgresql">PostgreSQL</option>
+                                                <option name="db_type" value="informix">INFORMIX</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>选择服务器&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                       title="选择执行该任务的服务器主机列表"></i><span style="color:red;"> *</span></label>
+                                        <br>
+                                        <select multiple class="selectpicker" data-actions-box="true"
+                                                data-select-all-text="全选"
+                                                data-deselect-all-text="未选" data-none-selected-text="请选择服务器"
+                                                data-live-search="true"
+                                                data-live-search-placeholder="请输入检索内容" data-width="100%"
+                                                name="playbook_server" id="playbook_server">
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>选择用户&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                      title="授权给那些用户能够使用"></i></label>
+                                        <select class="selectpicker" data-live-search="true"
+                                                data-live-search-placeholder="请输入检索内容" data-none-selected-text="请选择用户"
+                                                data-width="100%" name="playbook_auth_user" id="playbook_auth_user">
+                                            <!--<option name="playbook_auth_user" value="0">选择用户</option>-->
+                                            {% for ds in userList %}
+                                                <option name="playbook_auth_user"
+                                                        value="{{ ds.id }}">{{ ds.username }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>描述&nbsp;<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                    title="功能描述"></i></label>
+                                        <textarea class="form-control" rows="4" name="playbook_desc"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group col-lg-6 col-xs-6" style="text-align: right">
+                                        <button type="submit" class="btn btn-primary">添加</button>
+                                    </div>
+                                    <div class="form-group col-lg-6 col-xs-6" style="text-align:left">
+                                        <button type="button" class="btn btn-default" onclick="cancelClick()">取消</button>
+                                    </div>
+                                </div>
+
+                            <!-- /.col-lg-6 (nested) -->
+                            </form>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:1280px;height:auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        Playbook文件内容
+                    </h4>
+                </div>
+                <div class="modal-body">
+				<pre id="pre" class="traditional">
+					<div id="play_content">
+					</div>
+				</pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <!--page-wrapper common Function-->
+    <script src="{% static 'js/config.js' %}"></script>
+    <script type="text/javascript">
+        {% if errorInfo %}
+            window.wxc.xcConfirm("{{errorInfo}}", window.wxc.xcConfirm.typeEnum.error);
+        {% endif %}
+        $(function () {
+            <!--$("[data-toggle='tooltip']").tooltip();-->
+
+            changeServer('0');
+            $("#playbook_auth_group").change(function () {
+                $('#playbook_server').html('');
+                $('#playbook_server').selectpicker('refresh');
+                var group = $("#playbook_auth_group").val();
+                if (group[0] == "0") {
+                    $('#playbook_auth_group').selectpicker('deselectAll');
+                    $('#playbook_auth_group').selectpicker('render')
+                    $('#playbook_auth_group').selectpicker('val', '0')
+                }
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+
+            $("#os_type").change(function () {
+                $('#playbook_server').html('');
+                $('#playbook_server').selectpicker('refresh');
+                var group = $("#playbook_auth_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+
+            $("#middleware_type").change(function () {
+                $('#playbook_server').html('');
+                $('#playbook_server').selectpicker('refresh');
+                var group = $("#playbook_auth_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+
+            $("#db_type").change(function () {
+                $('#playbook_server').html('');
+                $('#playbook_server').selectpicker('refresh');
+                var group = $("#playbook_auth_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+
+            // $("#playbook_auth_group").change(function(){
+            //    var group = $("#playbook_auth_group").val();
+            //    changeServer(group)
+
+//        $('#playbook_server').html('');
+//        $('#playbook_server').selectpicker('refresh');
+//
+//
+//		$.each(group, function(i,val){
+//		    changeServer(val);
+//            if(val == 0){
+//                return false
+//            }
+//        });
+
+            //});
+
+            changePlaybookType('1');
+
+            $("#playbook_type").change(function () {
+                var typeId = $("#playbook_type").val();
+                changePlaybookType(typeId);
+            });
+        });
+        function validateSubmit() {
+            if ($("#playbook_name").val() == '') {
+                window.wxc.xcConfirm("请输入任务名称", window.wxc.xcConfirm.typeEnum.error);
+                return false;
+            }
+            else if ($("#playbook_server").val() == '' || $("#playbook_server").val() == null) {
+                window.wxc.xcConfirm("请选择服务器", window.wxc.xcConfirm.typeEnum.error);
+                return false;
+            }
+            return true;
+        }
+        function changePlaybookType(typeId) {
+            $.ajax({
+                url: '/api/tf/playbook/playbookinfo/' + typeId,
+                type: 'get',
+                data: {typeId: typeId},
+                success: function (result) {
+                    if (null != result) {
+                        var html = '';
+                        for (var i = 0; i < result.length; i++) {
+                            html += "<option value='" + result[i].playbook_file_name + "'>" + result[i].playbook_name + "</option>";
+                        }
+
+                        $("#playbook_file").html(html);
+                        $("#playbook_file").selectpicker('refresh');
+                    }
+                }
+            });
+        }
+
+        function changeServer(groupId) {
+            $.ajax({
+                "type": "post",
+                "url": "/apps/model/deviceInfo",
+                "data": {
+                    "groupId": groupId,
+                    "os_type": $("#os_type").val(),
+                    "middleware_type": $("#middleware_type").val(),
+                    "db_type": $("#db_type").val()
+
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        var html = '';
+                        for (var i = 0; i < resp["data"].length; i++) {
+                            html += "<option value='" + resp["data"][i].device_id + "'>" + resp["data"][i].device_id + "</option>";
+                        }
+
+                        $("#playbook_server").append(html);
+                        $("#playbook_server").selectpicker('refresh');
+                    }
+                },
+            });
+        }
+
+        function getAnsiblePlayBookFile(obj) {
+            var btnObj = $(obj);
+            var id = $("#playbook_file").val();
+            $.ajax({
+                url: '/apps/playbook/file1/', //请求地址
+                type: "POST",  //提交类似
+                data: {
+                    "fileName": id,
+                },  //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    if (response["code"] == "200") {
+                        btnObj.removeAttr('disabled');
+                        $("#play_content").html(response["data"]);
+                    }
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("查看失败", window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
+        function cancelClick() {
+            location.href='/apps/'
+        }
+    </script>
+
+{% endblock %}

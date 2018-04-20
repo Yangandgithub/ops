@@ -1,0 +1,506 @@
+{% extends 'index.html' %}
+{% block page-content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'workflow/css/demo.css' %}" type="text/css">
+<link rel="stylesheet" href="{% static 'workflow/js/jqueryUi/jquery-ui.custom.min.css' %}" type="text/css">
+
+<script src="{% static 'workflow/js/jqueryUi/jquery-ui.min.js' %}"></script>
+<script src="{% static 'workflow/js/jsplumb.js' %}"></script>
+<script src="{% static 'workflow/js/demo.js' %}"></script>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"><i class="fa fa-dashboard"></i>Workflow</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-database"></i>&nbsp;Workflow
+                </div>
+                <div class="panel-body">
+                    <div class="form-inline queryForm">
+                        <button class="btn btn-warning btn-sm" onclick="addView()"><i class="fa fa-plus-circle "></i>&nbsp;新增</button>
+                    </div>
+                    <table id="dataTableList"
+                        class="table table-striped table-bordered table-advance table-hove displayr nowrap"
+                        style="word-break:break-all;width:100%">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Workflow文件</th>
+                                <th class="text-center">描述</th>
+                                <th class="text-center">Workflow文件路径</th>
+                                <th class="text-center">Workflow文件名称</th>
+{#                                <th class="text-center">操作</th>#}
+                            </tr>
+                        </thead>
+                    </table>
+{#                    <div class="well">#}
+{#                        <h4>Workflow说明</h4>#}
+{#                        <ol>#}
+{#                            <li>#}
+{#                                <p>点击<i class="glyphicon glyphicon-edit"></i>编辑Workflow</p>#}
+{#                            </li>#}
+{#                            <li>#}
+{#                                <p>点击<i class="glyphicon glyphicon-trash"></i>删除Workflow</p>#}
+{#                            </li>#}
+{#                            <li>#}
+{#                                <p>点击<i class="glyphicon glyphicon-wrench"></i>绘制Workflow</p>#}
+{#                            </li>#}
+{#                        </ol>#}
+{#                     </div>#}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal used to create a new workflow with name, description, location-->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myZoneModalLabel">新增Workflow</h4>
+            </div>
+            <div class="modal-body">
+                <form id="form" class="form-horizontal">
+                    <div class="form-group">
+                        <label  class="col-sm-4 control-label">Workflow文件</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="workflow_name_create" name="workflow_name_create">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-4 control-label">Workflow描述</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="workflow_desc_create" name="workflow_desc_create">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-4 control-label">Workflow文件路径</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="workflow_path_create" name="workflow_path_create">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-4 control-label">Workflow文件名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="workflow_filename_create" name="workflow_filename_create">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="createWorkflow()"> 提交</button>
+			</div>
+        </div>
+    </div>
+</div>
+
+<!--modify an existed workflow's attributes like name, path, description-->
+<div class="modal fade" id="modfiyModal" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myZoneModalLabel">修改Workflow</h4>
+            </div>
+            <div class="modal-body">
+                <form id="form" class="form-horizontal">
+                    <div class="form-group">
+                        <label  class="col-sm-4 control-label">Workflow文件</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="workflow_name_alter" name="workflow_name_alter">
+                            <input type="hidden" class="form-control" id="id_mod" name="id_mod">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-4 control-label">Workflow描述</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="workflow_desc_alter" name="workflow_desc_alter">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-4 control-label">Workflow文件路径</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="workflow_path_alter" name="workflow_path_alter">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-4 control-label">Workflow文件名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control"
+							id="workflow_filename_alter" name="workflow_filename_alter">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="alterWorkflow()">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--workflow editor modal-->
+<div id="editWorkflow" class="modal" style="display: none;background: rgba(0,0,0,0.7);">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="cancel close">&times;</button>
+                <h4 class="modal-title">WorkFlow</h4>
+            </div>
+            <div class="modal-body">
+                <div id="workflowContainer">
+                    <div class="addFlowMask" id="addFlowMask" style="display: none">
+                        <div class="mask"></div>
+                        <div class="addFlowCxt">
+                            <div class="addFlowMaskheader">
+                                <button class="close" id="falseAddFlow">&times;</button>
+                                <h4 class="modal-title">WorkFlow节点编辑</h4>
+                            </div>
+                            <form class="addFlowInfo">
+                                <div class="form-group">
+                                    <label for="flowName" class="addFlowName control-label">添加名称</label>
+                                    <select class="selectpicker"
+                                            data-live-search="true"
+                                            data-live-search-placeholder="请输入检索内容"
+                                            data-none-selected-text="请选择平台"
+                                            data-width="100%"
+                                            id="flowName" name="device_id"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="parameter " class="parameter control-label">添加参数</label>
+                                    <input type="text" class="form-control" name="parameter" id="parameter">
+                                </div>
+
+                            </form>
+                            <div class="flowBtn">
+                                <button class="btn btn-primary button-ok" id="clickAddFlow">确定</button>
+                                <button class="btn btn-default button-false" id="falseAddFlow">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="leftContainer" id="leftContainer">
+                        <li id="startFlowNode">开始</li>
+                        <li id="addFlowNode">添加节点</li>
+                    </ul>
+                    <div class="flowContainer">
+                        <div class="jtk-demo-canvas canvas-wide flowchart-demo jtk-surface jtk-surface-nopan" id="canvas" style="position: relative"></div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="okFlow" class="btn btn-primary">提交</button>
+                <button id="executeFlow" class="btn btn-success">执行</button>
+                <button type="button"  class="cancel btn btn-default">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+	var oTable = null;
+	$(document).ready(function() {
+    	initTable();
+    	$("#query").click(function() {
+        	initTable();
+    	})
+	});
+
+	var initTable = function() {
+    	if (oTable != null) {
+        	oTable.fnClearTable(0);
+        	oTable.fnDraw(); //重新加载数据
+        	oTable.fnDestroy();
+    	}
+    	oTable = $('#dataTableList').dataTable({
+        	"fnPreDrawCallback": function() {
+            	$('.dataTable_header').remove();
+        	},
+        	"aLengthMenu": [10, 20, 50, 100],
+        	//更改显示记录数选项
+        	"bProcessing": true,
+        	//"scrollX": true,
+        	"bStateSave": true,
+        	//是否打开客户端状态记录功能,此功能在ajax刷新纪录的时候不会将个性化设定回复为初始化状态
+        	"bJQueryUI": false,
+        	//是否使用 jQury的UI theme
+        	"bFilter": false,
+        	// 搜索栏
+        	"bLengthChange": true,
+        	//关闭每页显示多少条数据
+        	"bSort": false,
+        	"bStateSave": false,
+        	"bServerSide": true,
+        	"iDisplayStart": 0,
+        	"iDisplayLength": 10,
+        	"bScrollCollapse": true,
+        	//是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+        	"bAutoWidth": false,
+        	//是否自适应宽度
+        	"aoColumns": [ //设定各列宽度
+        	{
+            	"mData": "workflow_name",
+            	"sDefaultContent": "",
+            	"bSearchable": false,
+            	"sClass": "text-center"
+        	},
+        	{
+            	"mData": "workflow_desc",
+            	"sDefaultContent": "",
+            	"bSearchable": false,
+            	"sClass": "text-center"
+        	},
+        	{
+            	"mData": "workflow_path",
+            	"sDefaultContent": "",
+            	"bSearchable": false,
+            	"sClass": "text-center"
+        	},
+        	{
+            	"mData": "workflow_filename",
+            	"sDefaultContent": "",
+            	"bSearchable": false,
+            	"sClass": "text-center"
+        	}
+        	/*,
+        	{
+            	"mData": null,
+            	"sDefaultContent": "",
+            	"bSearchable": false,
+            	"sClass": "text-center"
+        	{,*/
+        	],
+        	"oLanguage": {
+            	"sLengthMenu": "每页显示 _MENU_条",
+            	"sZeroRecords": "没有找到符合条件的数据",
+            	"sProcessing": " 数据加载中， 请稍候......",
+            	"sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+            	"sInfoEmpty": "没有记录",
+            	"sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+            	"sSearch": "",
+            	"oPaginate": {
+                	"sFirst": "首页",
+                	"sPrevious": "前一页",
+                	"sNext": "后一页",
+                	"sLast": "尾页"
+            	}
+        	},
+        	"fnRowCallback": function(nRow, aData, iDisplayIndex) {
+            	var id = aData.id;
+		    	/*var html = '<button  type="button" class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="编辑workflow" ' +
+                	'onclick="alterView(\''+ id + '\')"><i class="glyphicon glyphicon-edit"></i></button>&nbsp;' +
+			           	'<button  type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="left" title="删除设备" ' +
+                	'onclick="deleteWorkflow(this, \''+ id + '\')" ><i class="glyphicon glyphicon-wrench"></i></button>&nbsp;'  +
+						'<button  type="button" class="btn btn-info btn-xs workflow-btn" name="'+id+'" data-toggle="tooltip" data-placement="left" title="编辑Workflow"'  + '><i class="glypicon glyphicon-folder-open"></i></button>&nbsp'*/
+            	//$('td:eq(4)', nRow).html(html); //设置该列的值
+                var eq0='<div onclick="operationTap(this,\''+id+'\')"><a>'+aData.workflow_name+'</a></div>';
+                $('td:eq(0)', nRow).html(eq0);
+            	return nRow;
+        	},
+        	"fnInitComplete": function(oSettings, json) {
+            	$("[data-toggle='tooltip']").tooltip();
+        	},
+        	"sAjaxSource": "{% url 'workflow:workflow' %}",
+        	"fnServerData": retrieveData
+    	});
+	}
+
+	function retrieveData(sSource, aoData, fnCallback) {
+    	var iDisplayStart = 0;
+    	var iDisplayLength = 10;
+    	var sEcho;
+    	for (var i = 0; i < aoData.length; i++) {
+        	if (aoData[i].name == "iDisplayStart") {
+            	/*开始页数*/
+            	iDisplayStart = aoData[i].value;
+        	} else if (aoData[i].name == "iDisplayLength") {
+            	/*记录条数*/
+            	iDisplayLength = aoData[i].value;
+        	} else if (aoData[i].name == "sEcho") {
+            	/*记录条数*/
+            	sEcho = aoData[i].value;
+        	}
+    	}
+    	var page = (iDisplayStart / iDisplayLength) + 1;
+    	$.ajax({
+        	"type": "post",
+        	"url": sSource,
+        	"dataType": "json",
+        	"data": {
+            	//"playbook_type": $("#playbook_type").val(),
+            	//"playbook_name": $("#playbook_name").val(),
+            	//"playbook_file_name": $("#playbook_file_name").val(),
+            	"mode": "select",
+            	"aoData": aoData,
+            	"iDisplayStart": iDisplayStart,
+            	"iDisplayLength": iDisplayLength,
+            	"page": page,
+            	"sEcho": sEcho
+        	},
+        	"success": function(resp) {
+            	fnCallback(resp);
+        	},
+        	"error": function(response) {
+            	window.wxc.xcConfirm("数据格式不合法~", window.wxc.xcConfirm.typeEnum.error);
+        	}
+    	});
+	}
+
+	function addView() {
+    	$("#createModal").modal('show');
+	}
+	
+	function alterView(id) {
+    	$.ajax({
+        	"type": "post",
+			"url": "{% url 'workflow:workflow' %}",
+        	"dataType": "json",
+        	"data": {
+            	"workflow_id": id,
+            	"mode": "getWorkflowAttrs"
+        	},
+        	"success": function(resp) {
+            	if (resp["code"] == 0) {
+                	var data = resp["data"];
+                	$("#id_mod").val(data.workflow_id);
+                	$("#workflow_name_alter").val(data.workflow_name);
+                	$("#workflow_desc_alter").val(data.workflow_desc);
+                	$("#workflow_path_alter").val(data.workflow_path);
+                	$("#workflow_filename_alter").val(data.workflow_filename);
+                	$("#modfiyModal").modal('show');
+            	} else {
+                	window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+            	}
+        	},
+        	"error": function(response) {
+            	window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+        	}
+    	});
+
+	}
+	function alterWorkflow() {
+	    // alter somet attributes of an existing workflow
+    	$.ajax({
+        	"type": "post",
+			"url": "{% url 'workflow:workflow' %}",
+        	"dataType": "json",
+        	"data": {
+            	"workflow_id": $("#id_mod").val(),
+            	"workflow_name_alter": $("#workflow_name_alter").val(),
+            	"workflow_desc_alter": $("#workflow_desc_alter").val(),
+            	"workflow_path_alter": $("#workflow_path_alter").val(),
+            	"workflow_filename_alter": $("#workflow_filename_alter").val(),
+            	"mode": "alterWorkflow"
+        	},
+        	"success": function(resp) {
+            	if (resp["code"] == 0) {
+                	initTable();
+                	window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                	$("#modfiyModal").modal('hide');
+            	} else {
+                	window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+            	}
+        	},
+        	"error": function(response) {
+            	window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+        	}
+    	});
+	}
+	
+	function createWorkflow() {
+        // creat brand new workflow
+    	$.ajax({
+        	"type": "post",
+			"url": "{% url 'workflow:workflow' %}",
+        	"dataType": "json",
+        	"data": {
+            	"workflow_name": $("#workflow_name_create").val(),
+            	"workflow_desc": $("#workflow_desc_create").val(),
+            	"workflow_path": $("#workflow_path_create").val(),
+            	"workflow_filename": $("#workflow_filename_create").val(),
+            	"mode": "createWorkflow"
+        	},
+        	"success": function(resp) {
+            	if (resp["code"] == 0) {
+    				$("#createModal").modal('hide');
+                	initTable();
+                	window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+            	} else {
+                	window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+            	}
+        	},
+        	"error": function(response) {
+            	window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+        	}
+    	});
+	}
+
+	function deleteWorkflow(obj, id) {
+    	var txt = "是否确认删除？";
+    	var btnObj = $(obj);
+    	btnObj.attr('disabled', true);
+    	var option = {
+        	title: "删除记录",
+        	btn: parseInt("0011", 2),
+        	onOk: function() {
+            	$.ajax({
+                	"type": "post",
+					"url": "{% url 'workflow:workflow' %}",
+                	"dataType": "json",
+                	"data": {
+                    	"workflow_id": id,
+                    	"mode": "deleteWorkflow"
+                	},
+                	"success": function(resp) {
+                    	if (resp["code"] == 0) {
+                			initTable();
+                        	window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.success);
+                    	} else {
+                        	window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    	}
+                	},
+                	"error": function(response) {
+                    	window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                	}
+           		});
+        	},
+        	onCancel: function() {
+           		btnObj.attr('disabled', false);
+        	},
+        	onClose: function() {
+            	btnObj.attr('disabled', false);
+        	}
+    	}
+    	window.wxc.xcConfirm(txt, "custom", option);
+	}
+    function operationTap(op,id,name) {
+        var tr=$(op).parents('tr');
+        var tbody=$(op).parents('tbody');
+        if(tr.find('.operationModel').length!=0){
+            tr.find('.operationModel').remove();
+        }else{
+            var html='';
+            tbody.find('.operationModel').remove();
+            html='<div class="operationModel"><div class="title">操作栏</div><button  type="button" class="btn btn-primary btn-xs"' +
+                	'onclick="alterView(\''+ id + '\')"><abbr title="编辑workflow" ><i class="glyphicon glyphicon-edit"></i></abbr></button>&nbsp;' +
+                    '<button  type="button" class="btn btn-danger btn-xs" onclick="deleteWorkflow(this, \''+ id + '\')" ><abbr title="删除设备" ><i class="glyphicon glyphicon-trash"></i></abbr></button>&nbsp;'  +
+                    '<button  type="button" class="btn btn-info btn-xs workflow-btn" name="'+id+'" ><abbr title="编辑Workflow"><i class="glyphicon glyphicon-wrench"></i></abbr></button></div>';
+            tr.append(html)
+        }
+    }
+</script>
+
+{% endblock %}

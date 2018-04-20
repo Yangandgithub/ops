@@ -1,0 +1,551 @@
+{% extends 'index.html' %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa  fa-wrench"></i>Ansible 任务配置</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa  fa-plus"></i> 修改剧本
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                           <form role="form" method="post" enctype="multipart/form-data" onsubmit="return validateSubmit()">  {% csrf_token %}
+                               <div class="col-lg-6">
+                                    <legend><i class="fa  fa-paper-plane"></i>Ansible服务器</legend>
+
+                                    <div class="form-group">
+                                        <label>任务名称<span style="color:red;"> *</span></label>
+                                        <input class="form-control" id="playbook_name" name="playbook_name"
+                                               value="{{ playbook.playbook_name }}">
+                                        <input type="hidden" name="playbook_id" id="playbook_id"
+                                               value={{ playbook.id }}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>forks参数<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                         title="设置运行playbook的forks参数"></i></label>
+                                        <input class="form-control" id="forks" name="forks" value={{ playbook.forks }}>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label>运行模式<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                      title="设置playbook的运行模式"></i></label>
+                                        <br>
+                                        <select class="selectpicker" data-none-selected-text="请选择运行模式"
+                                                data-width="100%"
+                                                name="run_type" id="run_type">
+                                            {% if playbook.check == 0 %}
+                                                <option name="run_type" value="0" selected>Run</option>
+                                                <option name="run_type" value="1">Check</option>
+                                            {% else %}
+                                                <option name="run_type" value="0">Run</option>
+                                                <option name="run_type" value="1" selected>Check</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>查看任务文件<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                        title="查看Playbook文件"></i></label>
+                                        <br>
+                                        <button type="button" class="btn btn-default" data-toggle="modal"
+                                                data-target="#myModal"
+                                                onclick="getAnsiblePlayBookFile(this)">
+                                            <abbr title="查看Playbook文件">
+                                                <i class="fa  fa-eye  "></i>
+                                            </abbr>
+                                        </button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>用户<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                    title="授权给那些用户能够使用"></i></label>
+                                        <select class="form-control" name="playbook_auth_user">
+                                            <option name="playbook_auth_user" value="0">选择用户</option>
+                                            {% for ds in userList %}
+                                                {% if ds.id == playbook.playbook_auth_user %}
+                                                    <option name="playbook_auth_user" value="{{ ds.id }}"
+                                                            selected="selected">{{ ds.username }}</option>
+                                                {% else %}
+                                                    <option name="playbook_auth_user"
+                                                            value="{{ ds.id }}">{{ ds.username }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>剧本外部变量<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                        title="值为json格式"></i></label>
+                                        <textarea class="form-control" rows="3" name="playbook_vars"
+                                                  id="playbook_vars">{{ playbook.playbook_vars }}</textarea>
+                                        <p class="help-block">
+                                            例如：{"host":"all","user":"root"}
+                                        </p>
+                                    </div>
+                                    <!--<button type="reset" class="btn btn-default">撤销</button>-->
+
+                               </div>
+                            <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-6">
+                                <legend><i class="fa  fa-paper-plane-o"></i>目标服务器<i class="fa fa-info-circle"
+                                                                                    data-toggle="tooltip"
+                                                                                    title="配置执行此任务的目标服务器"></i></legend>
+                                <div class="form-group">
+                                    <label>资产平台<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                  title="服务器资产平台组"></i></label>
+                                    <select multiple class="selectpicker" data-actions-box="true"
+                                            data-select-all-text="全选"
+                                            data-deselect-all-text="未选" data-none-selected-text="请选择资产平台"
+                                            data-live-search="true"
+                                            data-live-search-placeholder="请输入检索内容" data-width="100%"
+                                            name="playbook_auth_group" id="playbook_auth_group">
+                                        {% if playbook.playbook_auth_group == "0" %}
+                                            <option name="group" value="0" selected="selected">全部平台</option>
+                                        {% else %}
+                                            <option name="group" value="0">全部平台</option>
+                                        {% endif %}
+                                        {% for ds in groupList %}
+                                            {% if ds.count == 1 %}
+                                                <option name="playbook_auth_group" value="{{ ds.id }}"
+                                                        selected="selected">{{ ds.name }}</option>
+                                            {% else %}
+                                                <option name="playbook_auth_group"
+                                                        value="{{ ds.id }}">{{ ds.name }}</option>
+                                            {% endif %}
+
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group ">
+                                    <label>操作系统类型<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                    title="根据选择操作系统类型过滤服务器主机,默认不过滤"></i></label>
+                                    <br>
+                                    <select class="selectpicker" data-live-search="true"
+                                            data-live-search-placeholder="请输入检索内容"
+                                            data-width="100%"
+                                            data-none-selected-text="请选择操作系统类型"
+                                            name="os_type" id="os_type">
+                                        {% if playbook.playbook_os_type == "" %}
+                                            <option name="os_type" value="" selected="selected">全部类型</option>
+                                        {% else %}
+                                            <option name="os_type" value="">全部类型</option>
+                                        {% endif %}
+                                        {% if playbook.playbook_os_type == "RedHat" %}
+                                            <option name="os_type" value="RedHat" selected="selected">RedHat</option>
+                                        {% else %}
+                                            <option name="os_type" value="RedHat">RedHat</option>
+                                        {% endif %}
+                                        {% if playbook.playbook_os_type == "CentOS" %}
+                                            <option name="os_type" value="CentOS" selected="selected">CentOS</option>
+                                        {% else %}
+                                            <option name="os_type" value="CentOS">CentOS</option>
+                                        {% endif %}
+                                        {% if playbook.playbook_os_type == "Solaris" %}
+                                            <option name="os_type" value="Solaris" selected="selected">Solaris</option>
+                                        {% else %}
+                                            <option name="os_type" value="Solaris">Solaris</option>
+                                        {% endif %}
+                                        {% if playbook.playbook_os_type == "SLES" %}
+                                            <option name="os_type" value="SLES" selected="selected">SLES</option>
+                                        {% else %}
+                                            <option name="os_type" value="SLES">SLES</option>
+                                        {% endif %}
+                                        {% if playbook.playbook_os_type == "AIX" %}
+                                            <option name="os_type" value="AIX" selected="selected">AIX</option>
+                                        {% else %}
+                                            <option name="os_type" value="AIX">AIX</option>
+                                        {% endif %}
+                                        {% if playbook.playbook_os_type == "HP-UX" %}
+                                            <option name="os_type" value="HP-UX" selected="selected">HP-UX</option>
+                                        {% else %}
+                                            <option name="os_type" value="HP-UX">HP-UX</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>中间件类型<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                   title="根据选择中间件类型过滤服务器主机,默认不过滤"></i></label>
+                                    <div>
+                                        <select class="selectpicker" data-live-search="true"
+                                                data-live-search-placeholder="请输入检索内容"
+                                                data-width="100%"
+                                                data-none-selected-text="请选择中间件类型"
+                                                name="middleware_type" id="middleware_type">
+                                            {% if playbook.playbook_middleware_type == "" %}
+                                                <option name="middleware_type" value="" selected="selected">全部类型
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="">全部类型</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "tomcat" %}
+                                                <option name="middleware_type" value="tomcat" selected="selected">
+                                                    Tomcat
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="tomcat">Tomcat</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "apache" %}
+                                                <option name="middleware_type" value="apache" selected="selected">
+                                                    Apache
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="apache">Apache</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "nginx" %}
+                                                <option name="middleware_type" value="nginx" selected="selected">nginx
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="nginx">nginx</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "zabbix" %}
+                                                <option name="middleware_type" value="zabbix" selected="selected">
+                                                    Zabbix
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="zabbix">Zabbix</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "openssh" %}
+                                                <option name="middleware_type" value="openssh" selected="selected">
+                                                    OpenSSH
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="openssh">OpenSSH</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "openssl" %}
+                                                <option name="middleware_type" value="openssl" selected="selected">
+                                                    OpenSSL
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="openssl">OpenSSL</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "struts" %}
+                                                <option name="middleware_type" value="struts" selected="selected">
+                                                    Struts
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="struts">Struts</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "weblogic" %}
+                                                <option name="middleware_type" value="weblogic" selected="selected">
+                                                    weblogic
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="weblogic">weblogic</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "jboss" %}
+                                                <option name="middleware_type" value="jboss" selected="selected">JBoss
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="jboss">JBoss</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "websphere" %}
+                                                <option name="middleware_type" value="websphere" selected="selected">
+                                                    WebSphere
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="websphere">WebSphere</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "sudo" %}
+                                                <option name="middleware_type" value="sudo" selected="selected">SUDO
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="sudo">SUDO</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "python" %}
+                                                <option name="middleware_type" value="python" selected="selected">
+                                                    Python
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="python">Python</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "resin" %}
+                                                <option name="middleware_type" value="resin" selected="selected">Resin
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="resin">Resin</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "axis" %}
+                                                <option name="middleware_type" value="axis" selected="selected">Axis
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="axis">Axis</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_middleware_type == "JDK" %}
+                                                <option name="middleware_type" value="JDK" selected="selected">JDK
+                                                </option>
+                                            {% else %}
+                                                <option name="middleware_type" value="JDK">JDK</option>
+                                            {% endif %}
+
+                                        </select>
+                                    </div>
+
+                                    <label>数据库类型<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                   title="根据选择数据库类型过滤服务器主机,默认不过滤"></i></label>
+                                    <div>
+                                        <select class="selectpicker" data-live-search="true"
+                                                data-live-search-placeholder="请输入检索内容"
+                                                data-width="100%"
+                                                data-none-selected-text="请选择数据库类型"
+                                                name="db_type" id="db_type">
+                                            {% if playbook.playbook_db_type == "" %}
+                                                <option name="db_type" value="" selected="selected">全部类型
+                                                </option>
+                                            {% else %}
+                                                <option name="db_type" value="">全部类型</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_db_type == "oracle" %}
+                                                <option name="db_type" value="oracle" selected="selected">Oracle
+                                                </option>
+                                            {% else %}
+                                                <option name="db_type" value="oracle">Oracle</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_db_type == "mysql" %}
+                                                <option name="db_type" value="mysql" selected="selected">MySQL
+                                                </option>
+                                            {% else %}
+                                                <option name="db_type" value="mysql">MySQL</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_db_type == "db2" %}
+                                                <option name="db_type" value="db2" selected="selected">DB2
+                                                </option>
+                                            {% else %}
+                                                <option name="db_type" value="db2">DB2</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_db_type == "sqlserver" %}
+                                                <option name="db_type" value="sqlserver" selected="selected">SqlServer
+                                                </option>
+                                            {% else %}
+                                                <option name="db_type" value="sqlserver">SqlServer</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_db_type == "sybase" %}
+                                                <option name="db_type" value="sybase" selected="selected">Sybase
+                                                </option>
+                                            {% else %}
+                                                <option name="db_type" value="sybase">Sybase</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_db_type == "postgresql" %}
+                                                <option name="db_type" value="postgresql" selected="selected">PostgreSQL
+                                                </option>
+                                            {% else %}
+                                                <option name="db_type" value="postgresql">PostgreSQL</option>
+                                            {% endif %}
+                                            {% if playbook.playbook_db_type == "informix" %}
+                                                <option name="db_type" value="informix" selected="selected">INFORMIX
+                                                </option>
+                                            {% else %}
+                                                <option name="db_type" value="informix">INFORMIX</option>
+                                            {% endif %}
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>选择服务器<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                   title="选择执行该任务的服务器主机列表"></i><span style="color:red;"> *</span></label>
+                                    <br>
+                                    <select multiple class="selectpicker" data-actions-box="true"
+                                            data-select-all-text="全选"
+                                            data-deselect-all-text="未选" data-none-selected-text="请选择服务器"
+                                            data-live-search="true"
+                                            data-live-search-placeholder="请输入检索内容" data-width="100%"
+                                            name="playbook_server" id="playbook_server">
+                                        {% for ds in serverList %}
+                                            {% if ds.count == 1 %}
+                                                <option name="playbook_server" value="{{ ds.device_id }}"
+                                                        selected="selected">{{ ds.device_id }}</option>
+                                            {% else %}
+                                                <option name="playbook_server"
+                                                        value="{{ ds.device_id }}">{{ ds.device_id }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>描述<i class="fa fa-info-circle" data-toggle="tooltip"
+                                                title="功能描述"></i></label>
+                                    <textarea class="form-control" rows="4"
+                                              name="playbook_desc">{{ playbook.playbook_desc }}</textarea>
+                                </div>
+                            </div>
+                                 <div class="col-lg-12">
+                                    <div class="form-group col-lg-6 col-xs-6" style="text-align: right">
+                                        <button type="submit" class="btn btn-primary">修改</button>
+                                    </div>
+                                    <div class="form-group col-lg-6 col-xs-6" style="text-align:left">
+                                        <button type="button" class="btn btn-default" onclick="cancelClick()">取消</button>
+                                    </div>
+                                </div>
+                            <!-- /.col-lg-6 (nested) -->
+                            </form>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:1280px;height:auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        Playbook文件内容
+                    </h4>
+                </div>
+                <div class="modal-body">
+				<pre id="pre" class="traditional">
+					<div id="play_content">
+					</div>
+				</pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <!--page-wrapper common Function-->
+    <script src="{% static 'js/config.js' %}"></script>
+    <script type="text/javascript">
+        {% if playbook.playbook_vars %}
+            var songResJson = JSON.parse(document.getElementById('playbook_vars').value);
+            $("#playbook_vars").text(JSON.stringify(songResJson, null, 2));
+        {% endif %}
+        {% if errorInfo %}
+            window.wxc.xcConfirm("{{errorInfo}}", window.wxc.xcConfirm.typeEnum.error);
+        {% endif %}
+
+        $(function () {
+            $("[data-toggle='tooltip']").tooltip();
+
+
+            $("#playbook_auth_group").change(function () {
+                $('#playbook_server').html('');
+                $('#playbook_server').selectpicker('refresh');
+                var group = $("#playbook_auth_group").val();
+                if (group[0] == "0") {
+                    $('#playbook_auth_group').selectpicker('deselectAll');
+                    $('#playbook_auth_group').selectpicker('render')
+                    $('#playbook_auth_group').selectpicker('val', '0')
+                }
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+
+            $("#os_type").change(function () {
+                $('#playbook_server').html('');
+                $('#playbook_server').selectpicker('refresh');
+                var group = $("#playbook_auth_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+
+            $("#middleware_type").change(function () {
+                $('#playbook_server').html('');
+                $('#playbook_server').selectpicker('refresh');
+                var group = $("#playbook_auth_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+
+            $("#db_type").change(function () {
+                $('#playbook_server').html('');
+                $('#playbook_server').selectpicker('refresh');
+                var group = $("#playbook_auth_group").val();
+                $.each(group, function (i, val) {
+                    changeServer(val);
+                    if (val == 0) {
+                        return false
+                    }
+                });
+            });
+        });
+
+        function validateSubmit() {
+            if ($("#playbook_name").val() == '') {
+                window.wxc.xcConfirm("请输入任务名称", window.wxc.xcConfirm.typeEnum.error);
+                return false;
+            }
+            else if ($("#playbook_server").val() == '' || $("#playbook_server").val() == null) {
+                window.wxc.xcConfirm("请选择服务器", window.wxc.xcConfirm.typeEnum.error);
+                return false;
+            }
+            return true;
+        }
+        function getAnsiblePlayBookFile(obj) {
+            var btnObj = $(obj);
+            var id = $("#playbook_id").val();
+            $.ajax({
+                url: '/apps/playbook/file/' + id + "/", //请求地址
+                type: "POST",  //提交类似
+                data: {
+                    "id": id
+                },  //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    if (response["code"] == "200") {
+                        btnObj.removeAttr('disabled');
+                        $("#play_content").html(response["data"]);
+                    }
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm("查看失败", window.wxc.xcConfirm.typeEnum.error);
+                }
+            })
+        }
+
+        function changeServer(groupId) {
+            $.ajax({
+                "type": "post",
+                "url": "/apps/model/deviceInfo",
+                "data": {
+                    "groupId": groupId,
+                    "os_type": $("#os_type").val(),
+                    "middleware_type": $("#middleware_type").val(),
+                    "db_type": $("#db_type").val()
+
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        var html = '';
+                        for (var i = 0; i < resp["data"].length; i++) {
+                            html += "<option value='" + resp["data"][i].device_id + "'>" + resp["data"][i].device_id + "</option>";
+                        }
+
+                        $("#playbook_server").append(html);
+                        $("#playbook_server").selectpicker('refresh');
+                    }
+                },
+            });
+        }
+        function cancelClick() {
+            location.href='/apps/'
+        }
+    </script>
+
+{% endblock %}

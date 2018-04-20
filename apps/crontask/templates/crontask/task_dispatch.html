@@ -1,0 +1,518 @@
+{% extends 'index.html' %} {% block ace-content %} {% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    <i class="fa fa-tasks"></i>&nbsp;
+                    <span>调度配置</span>
+                </h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa   fa-gear"></i> 调度配置
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#crontab" data-toggle="tab"><i class="fa fa-history"></i>
+                                Crontab调度</a>
+                            </li>
+                            <li><a href="#interval" data-toggle="tab"><i class="fa fa-envelope"></i> Interval调度</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="crontab">
+                                <div class="row">
+                                    <div class="widget-toolbox clearfix" style="margin-bottom: 10px;">
+                                        <button class="btn btn-sm btn-warning pull-right"
+                                                data-toggle="modal"
+                                                data-target="#addCrontabModal">
+{#                                            <abbr title="添加调度">#}
+                                                <i class="fa fa-plus"></i> <span class="bigger-110">添加Crontab调度</span>
+{#                                            </abbr>#}
+
+                                        </button>
+                                    </div>
+                                    <table class="table table-striped table-bordered table-advance table-hover nowrap">
+                                        <thead>
+                                        <tr>
+                                            <th class="center">序号</th>
+                                            <th class="center">分</th>
+                                            <th class="hidden-xs center">时</th>
+                                            <th class="hidden-480 center">天</th>
+                                            <th class="center">周</th>
+                                            <th class="center">年</th>
+{#                                            <th class="center">操作</th>#}
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        {% for ds in crontabList %}
+                                            <tr>
+                                                <td class="center" onclick="operationTap(this,'{{ ds.id }}',1)"><a>{{ ds.id }}</a> </td>
+                                                <td class="center">{{ ds.minute }}</td>
+                                                <td class="hidden-xs center">{{ ds.hour }}</td>
+                                                <td class="center">{{ ds.day_of_week }}</td>
+                                                <td class="center">{{ ds.day_of_month }}</td>
+                                                <td class="center">{{ ds.month_of_year }}</td>
+{#                                                <td class="center">#}
+{#                                                    <button class="btn btn-xs btn-danger"#}
+{#                                                            onclick="onBtnDelCrontab(this,'{{ ds.id }}')">#}
+{#                                                        <abbr title="删除">#}
+{#                                                            <i class="fa fa-trash-o"></i>#}
+{#                                                        </abbr>#}
+{##}
+{#                                                    </button>#}
+{#                                                </td>#}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="hr "></div>
+
+                                <div class="row">
+                                    <div class="col-sm-5 pull-right">
+                                        <h4 class="pull-right">
+                                            Total: <span class="red">{{ crontabList|length }}</span>
+                                        </h4>
+                                    </div>
+                                    <div class="panel-footer" style="background: transparent">
+                                        汇总信息
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="interval">
+                                <div class="row">
+                                    <div class="widget-toolbox padding-8 clearfix" style="margin-bottom: 10px;">
+                                        <button class="btn btn-sm btn-warning pull-right"
+                                                data-toggle="modal"
+                                                data-target="#addIntervalModal">
+                                                <i class="fa fa-plus"></i> <span class="bigger-110">添加Interval调度</span>
+                                        </button>
+                                    </div>
+                                    <table class="table table-striped table-bordered table-advance table-hover nowrap">
+                                        <thead>
+                                        <tr>
+                                            <th class="center">序号</th>
+                                            <th class="center">间隔</th>
+                                            <th class="center">类型</th>
+{#                                            <th class="center">操作</th>#}
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        {% for ds in intervalList %}
+                                            <tr>
+                                                <td class="center" onclick="operationTap(this,'{{ ds.id }}',2)"><a>{{ ds.id }}</a> </td>
+                                                <td class="center">{{ ds.every }}</td>
+                                                <td class="hidden-xs center">{{ ds.period }}</td>
+{#                                                <td class="center">#}
+{##}
+{#                                                    <button class="btn btn-xs btn-danger" onclick="onBtnDelinterval(this,'{{ ds.id }}')">#}
+{#                                                        <abbr title="删除">#}
+{#                                                            <i class="fa fa-trash-o"></i>#}
+{#                                                        </abbr>#}
+{#                                                    </button>#}
+{#                                                </td>#}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="hr "></div>
+
+                                <div class="row">
+                                    <div class="col-sm-5 pull-right">
+                                        <h4 class="pull-right">
+                                            Total: <span class="red">{{ intervalList|length }}</span>
+                                        </h4>
+                                    </div>
+                                    <div class="panel-footer" style="background: transparent">
+                                        汇总信息
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- Crontab模态框（Modal） -->
+    <div class="modal fade" id="addCrontabModal" tabindex="-1"
+         role="dialog" aria-labelledby="addCrontabModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title" id="addCrontabModalLabel">添加Crontab调度
+                    </h4>
+                </div>
+                <div class="modal-body">
+
+                    <form class="form-horizontal" id="addCrontab">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>分</strong></label>
+
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="*/5"
+                                       placeholder="*/5" name="minute"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-3"><strong>时</strong></label>
+
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="*" placeholder="*"
+                                       name="hour"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>周</strong></label>
+
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="*" placeholder="*"
+                                       name="day_of_week"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>月</strong></label>
+
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="*" placeholder="*"
+                                       name="day_of_month"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>年</strong></label>
+
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" value="*" placeholder="*"
+                                       name="month_of_year"/>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            onclick="addCrontab(this)">添加
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+
+
+    <!-- Interval模态框（Modal） -->
+    <div class="modal fade" id="addIntervalModal" tabindex="-1"
+         role="dialog" aria-labelledby="addIntervalModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title" id="addIntervalModalLabel">
+                        添加Interval调度</h4>
+                </div>
+                <div class="modal-body">
+
+                    <form class="form-horizontal" id="addInterval">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>间隔</strong></label>
+
+                            <div class="col-sm-3">
+                                <input class="form-control" type="text" value="5" placeholder="*"
+                                       name="every"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><strong>类型</strong></label>
+
+                            <div class="col-sm-3">
+                                <select name="period" class="form-control">
+                                    <option value="seconds" selected="selected">秒</option>
+                                    <option value="minutes">分钟</option>
+                                    <option value="hours">小时</option>
+                                    <option value="days">天</option>
+                                    <option value="microseconds">毫秒</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            onclick="addInterval(this)">添加
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+
+<script src="../../static/config.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#taskTableList').DataTable();
+        });
+        $(function () {
+            $("[data-toggle='popover']").popover();
+        });
+
+        $(function () {
+            var kwargs = document.getElementsByName('kwargs');
+            for (var i = 0; i < kwargs.length; i++) {
+                try {
+                    var songResJson = JSON.parse(kwargs[i].value);
+                    kwargs[i].value = JSON.stringify(songResJson, null, 2);
+                }
+                catch (err) {
+                    console.log(kwargs[i].value);
+                }
+
+            }
+        });
+
+        function addCrontab(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var server_data = {};
+            var required = ['minute', 'hour', "day_of_week", "day_of_month",
+                "month_of_year"];
+            /* 必填项列表 */
+            var form = document.getElementById('addCrontab');
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~",
+                        window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    server_data[name] = value;
+                }
+                ;
+            }
+            ;
+
+            $.ajax({
+                dataType: "JSON",
+                url: '/crontask/add_crontab/', //请求地址
+                type: "POST", //提交类似
+                data: server_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    if (response["code"] == 200) {
+                        window.wxc.xcConfirm(response["msg"],
+                            window.wxc.xcConfirm.typeEnum.success);
+                        location.reload();
+                    } else {
+                        window.wxc.xcConfirm(response["msg"],
+                            window.wxc.xcConfirm.typeEnum.error);
+                    }
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm(response["data"],
+                        window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+
+        function addInterval(obj) {
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var server_data = {};
+            var required = ['every'];
+            /* 必填项列表 */
+            var form = document.getElementById('addInterval');
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                idx = $.inArray(name, required);
+                if (idx >= 0 && value.length == 0) {
+                    window.wxc.xcConfirm("请注意必填项不能为空~",
+                        window.wxc.xcConfirm.typeEnum.error);
+                    btnObj.removeAttr('disabled');
+                    return false;
+                }
+                ;
+                if (value.length != 0 && name.length != 0) {
+                    server_data[name] = value;
+                }
+                ;
+            }
+            ;
+
+            $.ajax({
+                dataType: "JSON",
+                url: '/crontask/add_interval/', //请求地址
+                type: "POST", //提交类似
+                data: server_data, //提交参数
+                success: function (response) {
+                    btnObj.removeAttr('disabled');
+                    if (response["code"] == 200) {
+                        window.wxc.xcConfirm(response["msg"], window.wxc.xcConfirm.typeEnum.success);
+                        location.reload();
+                    } else {
+                        window.wxc.xcConfirm(response["msg"],
+                            window.wxc.xcConfirm.typeEnum.error);
+                    }
+
+                },
+                error: function (response) {
+                    btnObj.removeAttr('disabled');
+                    window.wxc.xcConfirm(response["data"],
+                        window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+
+        function onBtnDelCrontab(obj, id) {
+            var btnObj = $(obj);
+            var txt = "是否确认删除？";
+            var option = {
+                title: "删除(" + id + ")",
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/crontask/del_crontab/',
+                        data: {
+                            "id": id,
+                        },
+                        success: function (response) {
+                            if (response["code"] == "200") {
+                                window.wxc.xcConfirm(response["msg"], window.wxc.xcConfirm.typeEnum.success);
+                                location.reload();
+                            } else {
+                                window.wxc.xcConfirm(response["msg"],
+                                    window.wxc.xcConfirm.typeEnum.error);
+                            }
+
+                        },
+                        error: function (response) {
+                            window.wxc.xcConfirm("操作失败",
+                                window.wxc.xcConfirm.typeEnum.error);
+                        },
+                    });
+                },
+                onCancel: function () {
+                },
+                onClose: function () {
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+        function onBtnDelinterval(obj, id) {
+            var btnObj = $(obj);
+            var txt = "是否确认删除？";
+            var option = {
+                title: "删除(" + id + ")",
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/crontask/del_interval/',
+                        data: {
+                            "id": id,
+                        },
+                        success: function (response) {
+                            if (response["code"] == "200") {
+                                window.wxc.xcConfirm(response["msg"], window.wxc.xcConfirm.typeEnum.success);
+                                location.reload();
+                            } else {
+                                window.wxc.xcConfirm(response["msg"],
+                                    window.wxc.xcConfirm.typeEnum.error);
+                            }
+
+                        },
+                        error: function (response) {
+                            window.wxc.xcConfirm("操作失败",
+                                window.wxc.xcConfirm.typeEnum.error);
+                        },
+                    });
+                },
+                onCancel: function () {
+                },
+                onClose: function () {
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+       function operationTap(op,id,index) {
+            var tr=$(op).parents('tr');
+            var tbody=$(op).parents('tbody');
+            if(tr.find('.operationModel').length!=0){
+               tr.find('.operationModel').remove();
+            }else{
+                var html='';
+                tbody.find('.operationModel').remove();
+                if(index==1){
+                    html = '<div class="operationModel"><div class="title">操作栏</div> <button  type="button" class="btn btn-danger btn-xs"' +
+                        'onclick="onBtnDelCrontab(this,\'' + id + '\')" ><abbr title="删除设备"><i class="glyphicon glyphicon-trash"></i></abbr></button></div>';
+                }else{
+                   html = '<div class="operationModel"><div class="title">操作栏</div> <button  type="button" class="btn btn-danger btn-xs"' +
+                        'onclick="onBtnDelinterval(this,\'' + id + '\')" ><abbr title="删除设备"><i class="glyphicon glyphicon-trash"></i></abbr></button></div>';
+                }
+
+                tr.append(html)
+            }
+             $(document).one('click',function () {
+                tbody.find('.operationModel').remove();
+             });
+        }
+        $("table tr td:first-child").click(function (event) {
+             event.stopPropagation()
+        })
+
+
+    </script>
+
+{% endblock %}

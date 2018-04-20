@@ -1,0 +1,64 @@
+/* ---------------------------------------------------------------------- */
+/*	Sparklines
+/* ---------------------------------------------------------------------- */
+.mini-stats {
+	border-left: 1px solid #DDDDDD;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.mini-stats li {
+	border-left: 1px solid #FFFFFF;
+	border-right: 1px solid #DDDDDD;
+	padding-bottom: 6px;
+	text-align: center;
+}
+.mini-stats .sparkline_bar_good, .mini-stats .sparkline_bar_neutral, .mini-stats .sparkline_bar_bad {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+}
+.mini-stats li:last-child {
+	border-right: 0 none;
+}
+
+.mini-stats .values {
+	font-size: 12px;
+	padding: 10px 0;
+}
+.mini-stats .values strong {
+	display: block;
+	font-size: 18px;
+	margin-bottom: 2px;
+}
+.mini-stats .sparkline_bar_good, .mini-stats .sparkline_bar_neutral, .mini-stats .sparkline_bar_bad {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+}
+.mini-stats .sparkline_bar_good {
+	color: #459D30;
+}
+.mini-stats .sparkline_bar_neutral {
+	color: #757575;
+}
+.mini-stats .sparkline_bar_bad {
+	color: #BA1E20;
+}
+.jqstooltip {
+	width: auto !important;
+	height: auto !important;
+	padding: 2px 6px !important;
+	background-color: rgba(0, 0, 0, 0.7) !important;
+	border: 0 !important;
+	border-radius: 3px;
+}
+
+.traditional{
+	background: #000000;
+	color:#99FF33;
+}
+
+/*.table>tbody>tr>td{*/
+	/*text-align:center;*/
+/*}*/

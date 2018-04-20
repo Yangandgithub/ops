@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>网络安全操控平台</title>
+
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon"/>
+    <!-- jQuery -->
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="/static/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/static/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link href="/static/dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="/static/vendor/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="/static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- DataTables JavaScript
+    <script src="/static/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/static/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="/static/vendor/datatables-responsive/dataTables.responsive.js"></script>
+    <link href="/static/vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/static/vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
+-->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Multiselect CSS -->
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-select.css" type="text/css"/>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+
+    <!-- Morris Charts JavaScript -->
+    <script src="/static/vendor/raphael/raphael.min.js"></script>
+    <script src="/static/vendor/morrisjs/morris.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/static/dist/js/sb-admin-2.js"></script>
+
+    <!-- Flot Charts JavaScript -->
+    <script src="/static/vendor/flot/excanvas.min.js"></script>
+    <script src="/static/vendor/flot/jquery.flot.js"></script>
+    <script src="/static/vendor/flot/jquery.flot.pie.js"></script>
+    <script src="/static/vendor/flot/jquery.flot.resize.js"></script>
+    <script src="/static/vendor/flot/jquery.flot.time.js"></script>
+    <script src="/static/vendor/flot-tooltip/jquery.flot.tooltip.min.js"></script>
+
+    <!--    弹窗开始样式 -->
+    <script src="/static/dist/js/xcConfirm.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="/static/dist/css/xcConfirm.css"/>
+    <!--   csrf -->
+    <script src="/static/js/csrf.js"></script>
+
+    <!-- Multiselect JavaScript -->
+    <script type="text/javascript" src="/static/dist/js/bootstrap-select.js"></script>
+
+    <!-- Echat JavaScript -->
+    <script type="text/javascript" src="/static/js/echarts.js"></script>
+
+    <!-- Datetimepicker -->
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-datetimepicker.min.css" type="text/css"/>
+    <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.js"></script>
+
+    <!-- highcharts -->
+    <script src="/static/vendor/Highcharts/code/highcharts.js"></script>
+    <script src="/static/vendor/Highcharts/code/modules/exporting.js"></script>
+    <!-- bootstrap-validator -->
+    <link rel="stylesheet" href="/static/vendor/bootstrap-validator/css/bootstrapValidator.css" type="text/css"/>
+    <script src="/static/vendor/bootstrap-validator/js/bootstrapValidator.js"></script>
+    <script src="/static/vendor/bootstrap-validator/js/language/zh_CN.js"></script>
+
+    <!-- bootstrap-daterangepicker -->
+    <link rel="stylesheet" href="/static/vendor/bootstrap-daterangepicker/daterangepicker.css" type="text/css"/>
+    <script src="/static/vendor/bootstrap-daterangepicker/moment.min.js"></script>
+    <script src="/static/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- main.css -->
+    <link rel="stylesheet" href="/static/dist/css/main.css" type="text/css"/>
+
+    <!-- dataTables
+    <link rel="stylesheet" type="text/css" href="/static/vendor/DataTables-1.10.15/1.10.15/css/jquery.dataTables.min.css"/>
+    <script src="/static/vendor/DataTables-1.10.15/1.10.15/js/jquery.dataTables.min.js"/>
+    -->
+    <link rel="stylesheet" type="text/css" href="/static/vendor/DataTables-1.10.15/1.10.15/css/dataTables.bootstrap.css"/>
+    <script type="text/javascript" src="/static/vendor/DataTables-1.10.15/1.10.15/js/dataTables.bootstrap.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+
+    <script>
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]);
+            return null; //返回参数值
+        }
+
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+        });
+    </script>
+
+    <style>
+        body {
+            padding-top: 30px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+    <!--<img class="bg" src="/static/images/bg_login.jpg" alt="">-->
+    <div class="bg"></div>
+    <!-- Navigation -->
+<!--.navbar-blue-->
+    <nav class="navbar navbar-blue navbar-fixed-top" role="navigation" style="margin-bottom: 0;">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <img src="/static/img/logo.png" width="140px" height="50px" style="padding-left: 15px"/>
+        </div>
+        <a class="navbar-brand" href="/">网络安全操控平台</a>
+        <!-- /.navbar-header
+        <ul class="nav navbar-nav">
+            <li>
+                <a class="navbar-brand" href="/">网络安全操控平台</a>
+            </li>
+        </ul>
+        -->
+        <ul class="nav navbar-top-links navbar-right">
+            <!--
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell fa-fw">
+                    </i><span class="badge" id="deploy_order_count"></span>
+                    <i class="fa fa-caret-down"></i>
+
+                </a>
+                <ul class="dropdown-menu dropdown-messages" id="deploy_order">
+                </ul>
+            </li>
+            -->
+            <!-- /.dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle a-white" data-toggle="dropdown" href="#">
+                    {{ user }} <i class="fa fa-user fa-fw"></i><!--<i class="fa fa-caret-down"></i>-->
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li>
+                        <a href="/users/center/"><i class="fa fa-user fa-fw"></i> 修改密码</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="/logout"><i class="fa fa-sign-out fa-fw"></i> 退出</a>
+                    </li>
+                </ul>
+                <!-- /.dropdown-user -->
+            </li>
+            <!-- /.dropdown -->
+        </ul>
+        <!-- /.navbar-top-links -->
+
+        <div class="navbar-default sidebar" role="navigation">
+            <span class="page-tog" id="page-tog"></span>
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav" id="side-menu">
+                    <!--
+                    <li class="sidebar-search">
+                        <div class="input-group custom-search-form">
+                            <input type="text" class="form-control" placeholder="Search...">
+                            <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                        </div>
+
+                    </li>
+                    -->
+                    <li id="nav_dashboard">
+                        <a href="/"><span class="faBox"><i class="fa fa-dashboard fa-fw"></i></span> 仪表盘</a>
+                    </li>
+
+                    <li id="nav_inventory">
+                        <a href="#"><span class="faBox"><i class="fa fa-database fa-fw"></i></span> 资产管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/asset/list/">资产列表</a>
+                            </li>
+                            <li>
+                                <a href="/asset/list/">平台列表</a>
+                            </li>
+                            <li>
+                                <a href="/asset/port/">端口列表</a>
+                            </li>
+                            <li>
+                                <a href="/webssh/">webssh</a>
+                            </li>
+                            <!--
+                            <li>
+                                <a href="/assets_config">基础配置</a>
+                            </li>
+                            <li>
+                                <a href="/assets_add">添加资产</a>
+                            </li>
+                            <li>
+                                <a href="/assets_list">资产列表</a>
+                            </li>
+                            <li>
+                                    <a href="/assets_log">操作日志</a>
+                            </li>
+                            -->
+                        </ul>
+                    </li>
+                    <!--
+                    <li>
+                        <a href="/dashboard"><i class="fa fa-dashboard fa-fw"></i>仪表盘</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="glyphicon glyphicon-hdd"></i> 代码发布<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/deploy_add">项目配置</a>
+                            </li>
+                            <li>
+                                <a href="/deploy_list">项目列表</a>
+                            </li>
+                            <li>
+                                原子任务管理 <a href="/deploy_order">部署工单</a>
+                            </li>
+                            <li>
+                                <a href="/deploy_log">操作日志</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-table fa-fw"></i> 任务管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/cron_add">添加任务</a>
+                            </li>
+                            <li>
+                                <a href="/cron_config">批量导入</a>
+                            </li>
+                            <li>
+                                <a href="/cron_list">任务列表</a>
+                            </li>
+                            <li>
+                                 <a href="/cron_log/">操作日志</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/config"><i class="fa fa-wrench fa-fw"></i> 全局配置</a>
+                    </li>
+                    -->
+                    <li id="nav_ansible">
+                        <a href="#"><span class="faBox"><i class="fa fa-table fa-fw"></i></span> 批量执行<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/playbook/list">原子任务管理</a>
+                            </li>
+                            <li>
+                                <a href="/roles/list/">Roles管理</a>
+                            </li>
+                            <li>
+                                <a href="/apps/model/">命令执行</a>
+                            </li>
+
+                            <!--<li>
+                                <a href="/apps/model1/">命令执行测试</a>
+                            </li>
+                            -->
+
+                            <li>
+                                <a href="/apps/">任务列表</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><span class="faBox"><i class="fa fa-tasks fa-fw"></i></span> 工作流管理<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/workflow/workflow_task/">工作流</a></li>
+                        </ul> <!-- /.nav-second-level -->
+                    </li>
+                    <li><a href="#"><span class="faBox"><i class="fa fa-tasks fa-fw"></i></span> 任务调度<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/crontask/task_dispatch/">调度配置</a></li>
+                            <li><a href="/crontask/task_model/">任务调度配置</a></li>
+                        </ul> <!-- /.nav-second-level -->
+                    </li>
+                    <li id="log_manager">
+                        <a href="#"><span class="faBox"><i class="fa fa-table fa-fw"></i></span> 日志管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/log/ansible/list/">ansible操作日志</a>
+                                <a href="/log/user/list/">用户操作日志</a>
+                                <a href="/log/crontask/list/">定时任务操作日志</a>
+                                <a href="/log/workflow/list/">工作流操作日志</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><span class="faBox"><i class="fa fa-tasks fa-fw"></i></span> 配置管理<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/config/task_dispatch/">配置安全管理域</a></li>
+                            <li><a href="/config/task_model/">配置操作系统类型</a></li>
+                            <li><a href="/config/task_model/">配置中间件类型</a></li>
+                            <li><a href="/config/task_model/">配置数据库类型</a></li>
+                            <li><a href="/config/task_model/">配置系统全局变量</a></li>
+                        </ul> <!-- /.nav-second-level -->
+                    </li>
+                    <li id="nav_user">
+                        <a href="#"><span class="faBox"><i class="fa fa-group "></i></span> 用户中心<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/users/manage/">用户管理</a>
+                            </li>
+                            <!--
+                            <li>
+                                <a href="/user/center">用户配置</a>
+                            </li>
+
+                            <li>
+                                <a href="/logout">退出</a>
+                            </li>
+                            -->
+                        </ul>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% block page-content %}
+        <div id="page-wrapper" class="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header"><i class="fa fa-stack-overflow"></i>&nbsp;<span>仪表盘</span> </h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="panel panel-default" style="height: 400px">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> 资产分布
+                            <div class="pull-right">
+                                <div class="btn-group">
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="flot-small-container">
+                                <div class="row ">
+                                    <ul class="mini-stats ">
+                                        <li class="col-sm-2">
+                                            <div class="row ">
+
+                                                <table border="0" bordercolor="black" width="100%" cellspacing="0"
+                                                       cellpadding="5">
+                                                    <tr>
+                                                        <td rowspan="2" align="right" width="40%">
+                                                            <img class src="/static/images/u40.png">
+                                                        </td>
+                                                        <td>操作系统</td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td><h3>
+                                                            <a href="/asset/dashboard/list?ostype=all"><strong><font
+                                                                    color=black><span
+                                                                    id="OS">{{ osCount }}</span></font></strong></a>
+                                                        </h3></td>
+                                                    </tr>
+                                                </table>
+
+                                                <!--
+                                               <div class="col-sm-3">
+                                                   <img class src="<%=basePath%>/assets/images/u40.png">
+                                               </div>
+                                               <div class="col-sm-9">
+                                                   <div class="row">
+                                                       <div class="col-sm-12">操作系统</div>
+                                                   </div>
+                                                   <div class="row">
+                                                       <div class="col-sm-12">
+                                                           <h3>
+                                                               <a href="#"><strong><font color=black><span
+                                                                           id="OS">0</span></font></strong></a>
+                                                           </h3>
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                               -->
+                                            </div>
+                                        </li>
+                                        <li class="col-sm-10">
+                                            <div class="row ">
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">RedHat</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/dashboard/list?ostype=RedHat"><strong><font
+                                                                        color=black><span
+                                                                        id="RedHat">{{ osTypeTotal.RedHat }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">CentOS</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/dashboard/list?ostype=CentOS"><strong><font
+                                                                        color=black><span
+                                                                        id="CentOS">{{ osTypeTotal.CentOS }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">AIX</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/dashboard/list?ostype=AIX"><strong><font
+                                                                        color=black><span
+                                                                        id="AIX">{{ osTypeTotal.AIX }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">Solaris</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/dashboard/list?ostype=Solaris"><strong><font
+                                                                        color=black><span
+                                                                        id="Solaris">{{ osTypeTotal.Solaris }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">SUSE</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/dashboard/list?ostype=SLES"><strong><font
+                                                                        color=black><span
+                                                                        id="SLES">{{ osTypeTotal.SLES }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">HP-UX</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/dashboard/list?ostype=HP-UX"><strong><font
+                                                                        color=black><span
+                                                                        id="HP-UX">{{ osTypeTotal.HP }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="row">
+                                    <ul class="mini-stats ">
+                                        <li class="col-sm-2">
+                                            <div class="row ">
+                                                <table border="0" bordercolor="black" width="100%" cellspacing="0"
+                                                       cellpadding="5">
+                                                    <tr>
+                                                        <td rowspan="2" align="right" width="40%"><img class
+                                                                                                       src="/static/images/u84.png">
+                                                        </td>
+                                                        <td>数据库</td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td><h3>
+                                                            <a href="/asset/soft/list?sw_type=0&sw_name=all"><strong><font
+                                                                    color=black><span
+                                                                    id="DB">{{ softTypeTotal.dbCount }}</span></font></strong></a>
+                                                        </h3></td>
+                                                    </tr>
+                                                </table>
+                                                <!--
+                                                <div class="col-sm-3">
+                                                    <img class src="<%=basePath%>/assets/images/u84.png">
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">数据库</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="#"><strong><font color=black><span
+                                                                            id="DB">0</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                -->
+                                            </div>
+                                        </li>
+                                        <li class="col-sm-10">
+                                            <div class="row ">
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">Oracle</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=0&sw_name=oracle"><strong><font
+                                                                        color=black><span
+                                                                        id="Oracle">{{ softTypeTotal.Oracle }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">MySQL</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=0&sw_name=mysql"><strong><font
+                                                                        color=black><span
+                                                                        id="MySQL">{{ softTypeTotal.MySQL }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">SqlServer</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=0&sw_name=sqlserver"><strong><font
+                                                                        color=black><span
+                                                                        id="SqlServer">{{ softTypeTotal.SqlServer }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">DB2</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=0&sw_name=db2"><strong><font
+                                                                        color=black><span
+                                                                        id="DB2">{{ softTypeTotal.DB2 }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">Sybase</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=0&sw_name=sybase"><strong><font
+                                                                        color=black><span
+                                                                        id="Sybase">{{ softTypeTotal.Sybase }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">PostgreSQL</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=0&sw_name=postgresql"><strong><font
+                                                                        color=black><span
+                                                                        id="PostgreSQL">{{ softTypeTotal.PostgreSQL }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="row ">
+                                    <ul class="mini-stats ">
+                                        <li class="col-sm-2">
+                                            <div class="row ">
+                                                <table border="0" bordercolor="black" width="100%" cellspacing="0"
+                                                       cellpadding="5">
+                                                    <tr>
+                                                        <td rowspan="2" align="right" width="40%"><img class
+                                                                                                       src="/static/images/u86.png">
+                                                        </td>
+                                                        <td>应用软件</td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td><h3>
+                                                            <a href="/asset/soft/list?sw_type=1&sw_name=all"><strong><font
+                                                                    color=black><span
+                                                                    id="container">{{ softTypeTotal.softCount }}</span></font></strong></a>
+                                                        </h3></td>
+                                                    </tr>
+                                                </table>
+                                                <!--
+                                                <div class="col-sm-3">
+                                                    <img class src="<%=basePath%>/assets/images/u86.png">
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">中间件</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="#"><strong><font color=black><span
+                                                                            id="container">0</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                -->
+                                            </div>
+                                        </li>
+                                        <li class="col-sm-10">
+                                            <div class="row ">
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">Tomcat</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=1&sw_name=tomcat"><strong><font
+                                                                        color=black><span
+                                                                        id="Tomcat">{{ softTypeTotal.Tomcat }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">Apache</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=1&sw_name=apache"><strong><font
+                                                                        color=black><span
+                                                                        id="Apache">{{ softTypeTotal.Apache }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">nginx</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=1&sw_name=nginx"><strong><font
+                                                                        color=black><span
+                                                                        id="nginx">{{ softTypeTotal.nginx }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">weblogic</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=1&sw_name=weblogic"><strong><font
+                                                                        color=black><span
+                                                                        id="WebLogic">{{ softTypeTotal.WebLogic }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">JBoss</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=1&sw_name=jboss"><strong><font
+                                                                        color=black><span
+                                                                        id="JBoss">{{ softTypeTotal.JBoss }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">WebSphere</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>
+                                                                <a href="/asset/soft/list?sw_type=1&sw_name=websphere"><strong><font
+                                                                        color=black><span
+                                                                        id="WebSphere">{{ softTypeTotal.WebSphere }}</span></font></strong></a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-8 -->
+                <div class="col-lg-4">
+                    <div class="panel panel-default" style="height: 400px">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Playbook现状
+                        </div>
+                        <div class="panel-body">
+                            <div id="container_task" style="width: 100%; height: 300px"></div>
+                            <!--
+                            <div class="tabbable panel-tabs">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active">
+                                                <a data-toggle="tab" href="#panel_tab_task">
+                                                    任务
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a data-toggle="tab" href="#panel_tab_platform" >
+                                                    平台
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div id="panel_tab_task" class="tab-pane active">
+                                                    <div id="container_task" style="width: 100%; height: 300px"></div>
+                                            </div>
+                                            <div id="panel_tab_platform" class="tab-pane">
+                                                    <div id="container_platform" style="width: 100%; height: 300px"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                </div>
+                <!-- /.col-lg-4 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> 任务执行分布
+                        </div>
+                        <div class="panel-body">
+                            <div class="flot-small-container">
+                                <div id="container_task_line" style="width: 100%; height: 300px"></div>
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+        </div>
+        <!-- /#wrapper -->
+        <script type="text/javascript">
+
+            $(function () {
+                container_task_line1();
+                container_platform();
+                container_task();
+
+            });
+
+            function container_platform() {
+                $('#container_platform').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: null
+                    },
+                    tooltip: {
+                        headerFormat: '{series.name}<br>',
+                        pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    colors: [
+                        '#00FF00',//绿
+                        '#FF0000'//红
+                    ],
+                    series: [{
+                        type: 'pie',
+                        name: '平台占比',
+                        data: [
+                            ['平台1', 45.0],
+                            ['平台2', 26.8],
+                            ['平台3', 28.2]
+                        ]
+                    }]
+                });
+            }
+            function container_task() {
+                $('#container_task').highcharts({
+                    chart: {
+                        plotBackgroundColor:null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        backgroundColor:'transparent'
+                        /*backgroundColor: {
+                            linearGradient: [0, 0, 500, 500],
+                            stops: [
+                                [0, 'rgba(0, 0, 0,0.4)'],
+                                [1, 'rgba(0, 0, 0,0.2)']
+                            ]
+                        }*/
+                    },
+                     legend: {
+                        itemStyle: { cursor: 'pointer', color: '#fff' },
+                        itemHoverStyle: { color: '#3da1fe' }
+                    },
+                    title: {
+                        text: null
+                    },
+                    colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00',
+                 '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+                    tooltip: {
+                        headerFormat: '{series.name}<br>',
+                        pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: 'Playbook占比',
+                        data:{{ playbookSeries|safe }}
+                    }]
+                });
+
+            }
+            function container_task_line1() {
+                $('#container_task_line').highcharts({
+                    chart: {
+                        type: 'line',
+                        backgroundColor:'transparent'
+                        /*backgroundColor: {
+                            linearGradient: [0, 0, 500, 500],
+                            stops: [
+                                [0, 'rgba(0, 0, 0,0.4)'],
+                                [1, 'rgba(0, 0, 0,0.2)']
+                            ]
+                        }*/
+                    },
+                    title: {
+                         text:"任务执行分布",
+                        style:{
+                            color:"transparent"
+                        }
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        categories: {{series.categories|safe}},
+
+                        lineColor: "#fff",
+                         labels: {
+                            style: {
+                                color: '#fff'
+                            }
+                         }
+                    },
+                    yAxis: {
+                        title: {
+                            text: '次数',
+                            style:{color:'#fff'}
+                        },
+
+                        lineColor: "#fff",
+                         labels: {
+                            style: {
+                                color: '#fff'
+                            }
+                         }
+                    },
+                    plotOptions: {
+                        line: {
+                            dataLabels: {
+                                enabled: true,// 开启数据标签
+                                color:"#fff"
+                            },
+                            enableMouseTracking: false
+                        }
+                    },
+                    legend: {
+                        itemStyle: { cursor: 'pointer', color: '#fff' },
+                        itemHoverStyle: { color: '#3da1fe' }
+                    },
+                    colors: [
+                        '#50B432',//绿
+                        '#ED561B'//红
+                    ],
+                    series: [{
+                        name: '成功',
+                        data: {{series.success}}
+                    }, {
+                        name: '失败',
+                        data: {{series.fail}}
+                    }]
+                });
+            }
+
+
+        </script>
+    {% endblock %}
+
+</body>
+
+</html>
