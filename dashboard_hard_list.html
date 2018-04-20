@@ -1,0 +1,492 @@
+{% extends 'index.html' %}
+{% block page-content %}
+    <style>
+        #title{
+            color: #fff;
+        }
+    #title:hover{
+        text-decoration: none;
+    }
+    </style>
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa   fa-dashboard"></i>&nbsp;<span> <a id="title" ></a>主机列表 </span></h1>
+            </div>
+        </div>
+
+{#        <div class="row">#}
+{#            <div class="col-lg-12">#}
+{#                <div class="panel panel-default">#}
+{#                    <!-- /.panel-heading -->#}
+{#                    <div class="panel-body">#}
+{#                        <form class="form-inline">#}
+{#                            <div class="form-group ">#}
+{#                                <label class="control-label">所属平台</label>#}
+{#                                <select class="selectpicker" data-live-search="true"#}
+{#                                        data-live-search-placeholder="请输入检索内容" data-none-selected-text="请选择平台"#}
+{#                                        name="platform_id_query" id="platform_id_query">#}
+{#                                    <option name="platform_id_query" value="0" selected>全部平台</option>#}
+{#                                    {% for ds in groupList %}#}
+{#                                        <option name="platform_id_query" value="{{ ds.id }}">{{ ds.name }}</option>#}
+{#                                    {% endfor %}#}
+{#                                </select>#}
+{#                            </div>#}
+{#                            <div class="form-group ">#}
+{#                                <label class="control-label ">资产信息</label>#}
+{#                                <input class="form-control" id="deviceID" name="deviceID" type="text">#}
+{#                            </div>#}
+{#                            <div class="form-group ">#}
+{#                                <label class="control-label ">服务器IP</label>#}
+{#                                <input class="form-control" id="ipAdd" name="ipAdd" type="text">#}
+{#                            </div>#}
+{#                            <div class="form-group form-group-sm pull-right">#}
+{#                                <input type="button" id="query" class="btn btn-primary" value="查询">#}
+{#                            </div>#}
+{#                        </form>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-database"></i>&nbsp;资产明细
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <form class="form-inline queryForm">
+                            <label class="control-label">所属平台</label>
+                            <select class="selectpicker auto-select select-sm" data-live-search="true"
+                                    data-live-search-placeholder="请输入检索内容" data-none-selected-text="请选择平台"
+                                    name="platform_id_query" id="platform_id_query">
+                                <option name="platform_id_query" value="0" selected>全部平台</option>
+                                {% for ds in groupList %}
+                                    <option name="platform_id_query" value="{{ ds.id }}">{{ ds.name }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <label class="control-label ">资产信息</label>
+                            <input class="form-control auto-input input-sm" id="deviceID" name="deviceID" type="text">
+
+                            <label class="control-label ">服务器IP</label>
+                            <input class="form-control auto-input input-sm" id="ipAdd" name="ipAdd" type="text">
+
+                            <input type="button" id="query" class="btn btn-primary btn-sm" value="查询">
+
+                        </form>
+                        <table id="dataTableList"
+                               class="table table-striped table-bordered table-advance table-hove displayr nowrap"
+                               style="word-break:break-all;width:100%">
+                            <thead>
+                            <tr>
+                                <th class="text-center">资产信息</th>
+                                <th class="text-center">服务器IP</th>
+                                <th class="text-center">所属平台</th>
+                                <th class="text-center">操作系统</th>
+                                <th class="text-center">记录时间</th>
+{#                                <th class="text-center">操作</th>#}
+                            </tr>
+                            </thead>
+                        </table>
+                        <!-- /.table-responsive -->
+
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modfiyModal" tabindex="-1" role="dialog" aria-labelledby="myZoneModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width: 1200px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myZoneModalLabel">
+                        查看明细
+                    </h4>
+                </div>
+                <div class="modal-body" style="width: 100%; height:400px;overflow:scroll;overflow-x:auto">
+                    <form id="form" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">资产ID</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="asset_id" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">设备型号</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_equipment_type" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">设备序列号</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_serial_no" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">CPU型号</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_cpu_model" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">CPU个数</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_cpu_count" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">单个CPU线程</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_per_cpu_thread" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">CPU核数</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_cpu_kernel_count" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">最大内存</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_can_max_mem" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">内存插槽数</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_mem_slot_count" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">内存条数</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_mem_count" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">单内存厂商</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_per_mem_vendor" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">单内存类型</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_per_mem_type" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">单内存速率</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_per_mem_rate" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">单内存大小</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_per_mem_size" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">本地硬盘数</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_local_hd_count" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">本地硬盘大小</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_local_disk_size" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">本地硬盘型号</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_local_hd_model" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">网卡数</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_nwcard_count" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">单个网卡MAC</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_per_nwcard_mac" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">单个网卡</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="IPhd_per_nwcard_ip" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">单个网卡IP掩码</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_sper_nwcard_mask" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">HBA卡数</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_hba_count" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">单个HBA卡端口号</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_per_hba_port" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">单个HBA卡速率</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_per_hba_rate" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">是否有光驱</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_have_cdrom" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">光驱类型</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_cdrom_type" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">USB接口速率</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="hd_usb_speed" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">操作系统类型</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="os_type" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">操作系统架构</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="os_architecture" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">操作系统版本</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="os_version" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">文件系统类型</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="os_file_type" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">内存占用率</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="os_memory_used_rate" readonly>
+                            </div>
+                            <label class="col-sm-1 control-label">SELinux状态</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="acl_selinux_state" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">数据采集时间</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="record_time" readonly>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <script>
+             $(document).ready(function () {
+                 var autoinput = $("input.auto-input");
+                 autoinput.attr('size', 4);
+                 autoinput.keyup(function () {
+                     $(this).attr('size', $(this).val().length > 4 ? $(this).val().length : 4);
+                 });
+                 autoinput.keydown(function () {
+                     $(this).keyup()
+                 });
+             });
+    </script>
+    <script type="text/javascript">
+        var oTable = null;
+        var osType = getUrlParam('ostype');
+
+        $(document).ready(function () {
+            if (osType == 'all') {
+                $("#title").html('全部');
+                osType = '';
+            }
+            else {
+                $("#title").html(osType);
+            }
+            initTable();
+            $("#query").click(function () {
+                initTable();
+            })
+        });
+
+        var initTable = function () {
+            if (oTable != null) {
+                oTable.fnClearTable(0);
+                oTable.fnDraw(); //重新加载数据
+                oTable.fnDestroy();
+            }
+            oTable = $('#dataTableList').dataTable({
+                "fnPreDrawCallback": function () {
+                    $('.dataTable_header').remove();
+                },
+                "aLengthMenu": [10, 20, 50, 100], //更改显示记录数选项
+                "bProcessing": true,
+                //"scrollX": true,
+                "bStateSave": true, //是否打开客户端状态记录功能,此功能在ajax刷新纪录的时候不会将个性化设定回复为初始化状态
+                "bJQueryUI": false, //是否使用 jQury的UI theme
+                "bFilter": false,// 搜索栏
+                "bLengthChange": true, //关闭每页显示多少条数据
+                "bSort": false,
+                "bStateSave": false,
+                "bServerSide": true,
+                "iDisplayStart": 0,
+                "iDisplayLength": 10,
+                "bScrollCollapse": true, //是否开启DataTables的高度自适应，当数据条数不够分页数据条数的时候，插件高度是否随数据条数而改变
+                "bAutoWidth": false, //是否自适应宽度
+                "aoColumns": [//设定各列宽度
+                    {"mData": "device_id", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "ansible_ssh_host", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "platform_name", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "os_type", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {"mData": "record_time", "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},
+                    {#{"mData": null, "sDefaultContent": "", "bSearchable": false, "sClass": "text-center"},#}
+                ],
+                "oLanguage": {
+                    "sLengthMenu": "每页显示 _MENU_条",
+                    "sZeroRecords": "没有找到符合条件的数据",
+                    "sProcessing": " 数据加载中， 请稍候......",
+                    "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                    "sInfoEmpty": "没有记录",
+                    "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                    "sSearch": "",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "前一页",
+                        "sNext": "后一页",
+                        "sLast": "尾页"
+                    }
+                },
+                "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                    var asset_id = aData.asset_id;
+                    //var html = '<button  type="button" class="btn btn-primary btn-xs" onclick="view(\'' + asset_id + '\')"><abbr title="查看详情"><i class="glyphicon glyphicon-edit"></i></button>';
+                    var eq0='<a onclick="operationTap(this,\''+asset_id+'\')"></a>';
+                    $('td:eq(0)', nRow).html(eq0);
+                    //$('td:eq(5)', nRow).html(html);//设置该列的值
+                    return nRow;
+                },
+                "sAjaxSource": "/asset/dashboard/select/",
+                "fnServerData": retrieveData
+            });
+        };
+
+
+        function retrieveData(sSource, aoData, fnCallback) {
+            var iDisplayStart = 0;
+            var iDisplayLength = 10;
+            var sEcho;
+            for (var i = 0; i < aoData.length; i++) {
+                if (aoData[i].name == "iDisplayStart") {
+                    /*开始页数*/
+                    iDisplayStart = aoData[i].value;
+                } else if (aoData[i].name == "iDisplayLength") {
+                    /*记录条数*/
+                    iDisplayLength = aoData[i].value;
+                }
+                else if (aoData[i].name == "sEcho") {
+                    /*记录条数*/
+                    sEcho = aoData[i].value;
+                }
+            }
+            var page = (iDisplayStart / iDisplayLength) + 1;
+            $.ajax({
+                "type": "post",
+                "url": sSource,
+                "dataType": "json",
+                "data": {
+                    "platform_id": $("#platform_id_query").val(),
+                    "device_id": $("#deviceID").val(),
+                    "ipAdd": $("#ipAdd").val(),
+                    "aoData": aoData,
+                    "mode": 'select',
+                    "iDisplayStart": iDisplayStart,
+                    "iDisplayLength": iDisplayLength,
+                    "page": page,
+                    "os_type": osType,
+                    "asset_id": "",
+                    "sEcho": sEcho
+                },
+                "success": function (resp) {
+                    fnCallback(resp);
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("数据格式不合法~", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+
+        function view(asset_id) {
+            $.ajax({
+                "type": "post",
+                "url": "/asset/dashboard/selectbyid/",
+                "dataType": "json",
+                "data": {
+                    "asset_id": asset_id,
+                },
+                "success": function (resp) {
+                    if (resp["code"] == 0) {
+                        var data = resp["data"];
+                        $("#asset_id").val(data.asset_id);
+//$("#device_id").val(data.device_id);
+                        $("#hd_equipment_type").val(data.hd_equipment_type);
+                        $("#hd_serial_no").val(data.hd_serial_no);
+                        $("#hd_cpu_model").val(data.hd_cpu_model);
+                        $("#hd_cpu_count").val(data.hd_cpu_count);
+                        $("#hd_per_cpu_thread").val(data.hd_per_cpu_thread);
+                        $("#hd_cpu_kernel_count").val(data.hd_cpu_kernel_count);
+                        $("#hd_can_max_mem").val(data.hd_can_max_mem);
+                        $("#hd_mem_slot_count").val(data.hd_mem_slot_count);
+                        $("#hd_mem_count").val(data.hd_mem_count);
+                        $("#hd_per_mem_vendor").val(data.hd_per_mem_vendor);
+                        $("#hd_per_mem_type").val(data.hd_per_mem_type);
+                        $("#hd_per_mem_rate").val(data.hd_per_mem_rate);
+                        $("#hd_per_mem_size").val(data.hd_per_mem_size);
+                        $("#hd_local_hd_count").val(data.hd_local_hd_count);
+                        $("#hd_local_disk_size").val(data.hd_local_disk_size);
+                        $("#hd_local_hd_model").val(data.hd_local_hd_model);
+                        $("#hd_nwcard_count").val(data.hd_nwcard_count);
+                        $("#hd_per_nwcard_mac").val(data.hd_per_nwcard_mac);
+                        $("#hd_per_nwcard_ip").val(data.hd_per_nwcard_ip);
+                        $("#hd_sper_nwcard_mask").val(data.hd_sper_nwcard_mask);
+                        $("#hd_hba_count").val(data.hd_hba_count);
+                        $("#hd_per_hba_port").val(data.hd_per_hba_port);
+                        $("#hd_per_hba_rate").val(data.hd_per_hba_rate);
+                        $("#hd_have_cdrom").val(data.hd_have_cdrom);
+                        $("#hd_cdrom_type").val(data.hd_cdrom_type);
+                        $("#hd_usb_speed").val(data.hd_usb_speed);
+                        $("#os_type").val(data.os_type);
+                        $("#os_architecture").val(data.os_architecture);
+                        $("#os_version").val(data.os_version);
+                        $("#os_file_type").val(data.os_file_type);
+                        $("#os_memory_used_rate").val(data.os_memory_used_rate);
+                        $("#acl_selinux_state").val(data.acl_selinux_state);
+                        $("#record_time").val(data.record_time);
+
+                        $("#modfiyModal").modal('show');
+                    }
+                    else {
+                        window.wxc.xcConfirm(resp["msg"], window.wxc.xcConfirm.typeEnum.error);
+                    }
+                },
+                "error": function (response) {
+                    window.wxc.xcConfirm("操作失败!", window.wxc.xcConfirm.typeEnum.error);
+                }
+            });
+        }
+      function operationTap(op,id,name) {
+                var tr=$(op).parents('tr');
+                var tbody=$(op).parents('tbody');
+                if(tr.find('.operationModel').length!=0){
+                    tr.find('.operationModel').remove();
+                }else{
+                    var html='';
+                    tbody.find('.operationModel').remove();
+                     html='<div class="operationModel"><div class="title">操作栏</div><button  type="button" class="btn btn-primary btn-xs" onclick="view(\'' + asset_id + '\')"><abbr title="查看设备详情"><i class="glyphicon glyphicon-edit"></i></abbr></button></div>';
+                    tr.append(html)
+                }
+            }
+    </script>
+{% endblock %}
